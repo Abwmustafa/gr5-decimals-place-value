@@ -197,6 +197,25 @@ svg .hl{fill:rgba(242,183,5,.55);stroke:#c99700;stroke-width:2;pointer-events:no
 @keyframes rise{from{transform:translateY(80px) scaleY(.05);opacity:0}to{transform:none;opacity:1}}
 .stage-hint{position:absolute;left:12px;bottom:8px;z-index:3;font-size:13px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.8);border-radius:999px;padding:2px 10px;pointer-events:none}
 .info{background:#f7fafd;border-radius:14px;padding:12px 14px;margin-top:10px;min-height:56px}
+/* a small 3D model beside every question */
+.q.has3d{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.q.has3d>.qmain{min-width:0}
+.d3{position:relative;margin-top:30px;background:linear-gradient(#f6f9fc,#e2ebf5);border:2px solid var(--line);border-radius:14px;padding:0 8px 8px}
+.d3 svg{display:block;width:100%;height:auto;margin-top:-34px;overflow:visible;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;position:relative;z-index:2}
+.d3 svg:active{cursor:grabbing}
+.d3 .bob{animation:bob 3.6s ease-in-out infinite}
+.d3 .shadow{transform-box:fill-box;transform-origin:center;animation:shadowPulse 3.6s ease-in-out infinite}
+.d3cap{font-size:15px;line-height:1.4;min-height:2.8em;padding:0 2px;color:var(--ink)}
+.d3cap .chain{margin-top:4px}
+.d3btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.d3btns:empty{display:none}
+.d3btns button{appearance:none;border:0;border-radius:10px;background:var(--brand-soft);color:var(--brand-dark);font-weight:800;font-size:15px;padding:6px 10px;min-height:40px;cursor:pointer;flex:1 1 auto}
+.d3btns button.on{background:var(--brand);color:#fff}
+.d3btns button:disabled{opacity:.35;cursor:default}
+.d3hint{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-top:6px}
+.grid3d{max-width:380px}
+@media (max-width:760px){.q.has3d{grid-template-columns:1fr;gap:10px}.q.has3d>.d3{order:-1;width:100%;max-width:420px;justify-self:center}}
+@media (prefers-reduced-motion:reduce){.d3 .bob,.d3 .shadow{animation:none !important}}
 .speech-row{display:flex;gap:12px;align-items:center;margin:4px 0 10px}
 .kid{flex:none;width:64px;height:64px}
 .speech{background:#f3eafa;border-radius:18px;padding:12px 16px;position:relative;font-size:19px}
@@ -386,6 +405,7 @@ nav.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.9
       </div>
       <div>
         <div class="box" id="gridTask"></div>
+        <div class="grid3d" id="grid3d"></div>
         <div class="sidebox" data-reveal-when="g1 g2" hidden>
           <b>Compare them</b>
           <div class="pair">
@@ -588,7 +608,10 @@ function record(id, ok){
 function solved(id){ return !!(state.items[id] && state.items[id].solved); }
 var GRADED=[], TOPIC={};
 function reg(id, el){ if (GRADED.indexOf(id)<0){ GRADED.push(id); var pg=el.closest('.page'); var t=el.closest('.exb'); TOPIC[id]=(t && $('.extitle',t) ? $('.extitle',t).textContent : (pg && $('.sec',pg) ? $('.sec',pg).textContent : '')).trim(); } }
-function updateReveals(){ $$('[data-reveal-when]').forEach(function(el){ el.hidden = !el.getAttribute('data-reveal-when').split(/\s+/).every(solved); }); }
+function updateReveals(){
+  $$('[data-reveal-when]').forEach(function(el){ el.hidden = !el.getAttribute('data-reveal-when').split(/\s+/).every(solved); });
+  if (typeof DEMOS!=='undefined' && DEMOS) DEMOS.forEach(function(d){ d.refresh(); });
+}
 function fb(el, ok, html){ el.className='fb show '+(ok?'ok':'no'); el.innerHTML=html; }
 function updateScore(popIt){
   var n=GRADED.filter(function(id){ return state.items[id] && state.items[id].first===true; }).length;
@@ -847,7 +870,7 @@ function renderNum(el,id,q){
 
 /* ---------- page 2: drag-to-shade grid ---------- */
 function setupGrid(){
-  var g=$('#grid100'), cells=[], tool='tenth', r, c, painting=false, paintVal=true, last=null;
+  var g=$('#grid100'), cells=[], tool='tenth', r, c, painting=false, paintVal=true, last=null, mirror=Demo3D($('#grid3d'), gridSpec());
   for (r=0;r<10;r++) for (c=0;c<10;c++){ var d=document.createElement('div'); d.className='cell'; d.setAttribute('data-c',c); g.appendChild(d); cells.push(d); }
   $$('[data-tool]').forEach(function(t){ t.addEventListener('click', function(){ tool=t.getAttribute('data-tool'); $$('[data-tool]').forEach(function(x){ x.classList.toggle('on',x===t); }); }); });
   function col(cell){ var cc=cell.getAttribute('data-c'); return cells.filter(function(x){ return x.getAttribute('data-c')===cc; }); }
@@ -874,6 +897,7 @@ function setupGrid(){
     else if (n===0) out='Nothing shaded yet: <b>0</b>';
     else out='<b>'+n+'</b> hundredth'+(n===1?'':'s')+' = <b class="bigval">'+(n/100)+'</b>'+(n%10===0?' = '+(n/10)+' tenth'+(n===10?'':'s'):'');
     $('#gridRead').innerHTML=out;
+    mirror.replace(0, gridFrame(cells.map(function(x){ return x.classList.contains('on'); })));
   }
   var TASKS=[
     {id:'g1', target:30, label:'0.3', hint:'0.3 means 3 tenths. Choose the <b>Tenth</b> tool and shade 3 columns.', explain:'3 tenths = 30 hundredths = 0.3'},
@@ -907,6 +931,9 @@ function shade(hex,f){
 var LIGHT=(function(){ var v=[-0.35,0.8,0.5], m=Math.hypot(v[0],v[1],v[2]); return [v[0]/m,v[1]/m,v[2]/m]; })();
 function boxSVG(dims,cx,cy,S,yaw,pitch,color,off){
   var h=[dims[0]/2,dims[1]/2,dims[2]/2], cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch), o=off||[0,0,0];
+  // when the model is drawn small, draw grid lines every 10 units instead of every unit, and thinner edges
+  var st=1; while (S*st<3.2) st*=10;
+  var sw=Math.max(0.4,Math.min(1.2,S*0.11)).toFixed(2);
   function rot(v){ var x=v[0]*cyw+v[2]*syw, z=-v[0]*syw+v[2]*cyw, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
   function P(v){ var r=rot([v[0]+o[0],v[1]+o[1],v[2]+o[2]]); return [(cx+r[0]*S).toFixed(1), (cy-r[1]*S).toFixed(1)]; }
   var faces=[], a, sg;
@@ -915,15 +942,15 @@ function boxSVG(dims,cx,cy,S,yaw,pitch,color,off){
     var b=(a+1)%3, c=(a+2)%3;
     var pt=(function(a,b,c,sg){ return function(u,v){ var q=[0,0,0]; q[a]=sg*h[a]; q[b]=u; q[c]=v; return q; }; })(a,b,c,sg);
     var corners=[pt(-h[b],-h[c]),pt(h[b],-h[c]),pt(h[b],h[c]),pt(-h[b],h[c])], lines=[], k;
-    for (k=1;k<dims[b];k++) lines.push([pt(-h[b]+k,-h[c]),pt(-h[b]+k,h[c])]);
-    for (k=1;k<dims[c];k++) lines.push([pt(-h[b],-h[c]+k),pt(h[b],-h[c]+k)]);
+    for (k=st;k<dims[b]-1e-6;k+=st) lines.push([pt(-h[b]+k,-h[c]),pt(-h[b]+k,h[c])]);
+    for (k=st;k<dims[c]-1e-6;k+=st) lines.push([pt(-h[b],-h[c]+k),pt(h[b],-h[c]+k)]);
     var light=Math.max(0,rn[0]*LIGHT[0]+rn[1]*LIGHT[1]+rn[2]*LIGHT[2]);
     faces.push({z:rn[2]*h[a], corners:corners, lines:lines, light:light});
   }
   faces.sort(function(x,y){ return x.z-y.z; });
   var s='';
   faces.forEach(function(f){
-    s+='<polygon points="'+f.corners.map(function(v){ return P(v).join(','); }).join(' ')+'" fill="'+shade(color,(f.light-0.55)*0.9)+'" stroke="'+COL.ink+'" stroke-width="1.2" stroke-linejoin="round"/>';
+    s+='<polygon points="'+f.corners.map(function(v){ return P(v).join(','); }).join(' ')+'" fill="'+shade(color,(f.light-0.55)*0.9)+'" stroke="'+COL.ink+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
     f.lines.forEach(function(l){ var p=P(l[0]), q=P(l[1]); s+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(27,42,58,.32)" stroke-width=".6"/>'; });
   });
   return s;
@@ -1008,6 +1035,313 @@ function setupHero(){
   }
   draw(0);
   return {active:function(a){ on=!!a && !document.hidden && !CALM; if (on && !raf) raf=requestAnimationFrame(frame); }};
+}
+
+/* ---------- a 3D model beside every question ----------
+   One small engine draws every model. A scene is a list of boxes (size, centre, colour, group).
+   A model has one or more frames (scenes) with the same number of boxes, so moving from one frame
+   to the next can grow, shrink or slide each box. That is how "× 10" is shown: every block grows
+   ten times along one direction. The mouse turns the model; dragging spins it; pointing at a group
+   lights it up and explains it; clicking a group zooms in on it, so a tiny thousandths cube can
+   still be seen next to a whole cube drawn at true scale. Values that a question asks for show
+   as "?" until that question is answered. */
+var PD={'1':[10,10,100],'0':[10,10,10],'-1':[1,10,10],'-2':[1,1,10],'-3':[1,1,1]};   // block size per place
+var PP={'1':14,'0':14,'-1':2.6,'-2':2.6,'-3':2.6};                                 // spacing in a row
+var PN={'1':['ten','tens'],'0':['cube','cubes'],'-1':['flat','flats'],'-2':['rod','rods'],'-3':['tiny cube','tiny cubes']};
+var PEACH={'1':'10','0':'1 whole','-1':'1 tenth','-2':'1 hundredth','-3':'1 thousandth'};
+var DEMOS=[], DID=0;
+function pname(n,p){ return PN[p][n===1?0:1]; }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clampN(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+function mixHex(a,b,t){
+  if (a===b || t<=0) return a; if (t>=1) return b;
+  var x=parseInt(a.slice(1),16), y=parseInt(b.slice(1),16);
+  return '#'+[16,8,0].map(function(s){ return ('0'+Math.round(lerp(x>>s&255,y>>s&255,t)).toString(16)).slice(-2); }).join('');
+}
+function money(n,p){ return 'AED '+(n*pow10(p)).toFixed(2); }
+function val(x,rev){ return typeof x==='function' ? x(rev) : x; }
+// n blocks of place p in a row; whole cubes go in rows of 3 so a number like 5.377 stays compact
+function row(n,p,cx,g){
+  var d=PD[p], out=[], cols=(p===0 && n>3) ? 3 : n, rows=Math.ceil(n/cols), i;
+  for (i=0;i<n;i++){
+    var r=Math.floor(i/cols), k=i%cols, inRow=Math.min(cols, n-r*cols);
+    out.push({d:d.slice(), c:[cx+(k-(inRow-1)/2)*PP[p], d[1]/2, (r-(rows-1)/2)*PP[p]], col:placeOf(p).color, g:g});
+  }
+  return out;
+}
+function rowW(n,p){ return n ? (Math.min(n, (p===0 && n>3) ? 3 : n)-1)*PP[p]+PD[p][0] : 0; }
+function fitCam(bs,W,H,cap){
+  var lo=[1e9,1e9,1e9], hi=[-1e9,-1e9,-1e9], any=false;
+  bs.forEach(function(b){
+    if (b.nofit || Math.min(b.d[0],b.d[1],b.d[2])<0.02) return; any=true;
+    for (var k=0;k<3;k++){ lo[k]=Math.min(lo[k],b.c[k]-b.d[k]/2); hi[k]=Math.max(hi[k],b.c[k]+b.d[k]/2); }
+  });
+  if (!any){ lo=[-5,0,-5]; hi=[5,10,5]; }
+  var dx=hi[0]-lo[0], dy=hi[1]-lo[1], dz=hi[2]-lo[2], hz=Math.hypot(dx,dz)/2, P=0.45;
+  var S=Math.min(W*0.42/Math.max(hz,0.5), H*0.36/Math.max(dy/2*Math.cos(P)+hz*Math.sin(P),0.5), cap||14);
+  return {x:(lo[0]+hi[0])/2, y:(lo[1]+hi[1])/2, z:(lo[2]+hi[2])/2, S:S, hz:hz, fl:lo[1]};
+}
+
+function Demo3D(host, spec){
+  var uid='d3x'+(++DID), W=300, H=210, CX=W/2, CY=H*0.5;
+  host.classList.add('d3','popup');
+  host.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(spec.aria||'3D model of base-ten blocks')+'"><defs>'+
+    '<filter id="'+uid+'g" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="0" stdDeviation="2.6" flood-color="#f2b705" flood-opacity="1"/></filter>'+
+    '<radialGradient id="'+uid+'s"><stop offset="0" stop-color="#0e2a44" stop-opacity=".42"/><stop offset="1" stop-color="#0e2a44" stop-opacity="0"/></radialGradient>'+
+    // blocks may rise a little above the card ("out of the page"), but a zoomed-in model never covers the question
+    '<clipPath id="'+uid+'c"><rect x="-6" y="-26" width="'+(W+12)+'" height="'+(H+30)+'" rx="12"/></clipPath></defs>'+
+    '<g clip-path="url(#'+uid+'c)"><ellipse class="shadow" fill="url(#'+uid+'s)"/><g class="bob"><g class="sc"></g><g class="lb"></g></g></g></svg>'+
+    '<div class="d3cap"></div><div class="d3btns"></div>'+
+    '<div class="d3hint">'+(HOVER?'Move the mouse to turn it · drag to spin':'Slide your finger across it to turn it')+(spec.zoom?(HOVER?' · click blocks to zoom':' · tap blocks to zoom'):'')+'</div>';
+  var svg=$('svg',host), sc=$('.sc',svg), lb=$('.lb',svg), shEl=$('.shadow',svg), capEl=$('.d3cap',host), btnBox=$('.d3btns',host);
+  var frames=spec.frames, cur=spec.start||0, A=null, B=frames[cur].boxes, t=1, t0=0, DUR=CALM?0:(spec.dur||750);
+  var Y0=spec.yaw!=null?spec.yaw:-0.62, P0=spec.pitch!=null?spec.pitch:0.45, yaw=Y0, pitch=P0, tYaw=Y0, tPitch=P0, spin=0;
+  var hov=null, foc=null, raf=0, drawn=false, down=null, lastCap=null;
+  var cam=fitCam(B,W,H,spec.zcap);
+  function isRev(){ return spec.qid ? solved(spec.qid) : true; }
+  var lastRev=isRev();
+  function now(){
+    if (!A || t>=1) return B;
+    var e=ease(t);
+    return B.map(function(b,i){
+      var a=A[i]||{d:[0,0,0], c:b.c, col:b.col};
+      return {d:[lerp(a.d[0],b.d[0],e),lerp(a.d[1],b.d[1],e),lerp(a.d[2],b.d[2],e)], c:[lerp(a.c[0],b.c[0],e),lerp(a.c[1],b.c[1],e),lerp(a.c[2],b.c[2],e)],
+              col:mixHex(a.col,b.col,e), g:b.g, dim:b.dim, under:b.under, nofit:b.nofit};
+    });
+  }
+  function camTarget(){
+    var bs=(A && t<0.45) ? A : B, cap=spec.zcap;    // grow first, then the camera follows
+    if (spec.zoom && foc!==null){ bs=B.filter(function(b){ return b.g===foc; }); cap=16; }
+    return fitCam(bs,W,H,cap);
+  }
+  function render(){
+    drawn=true;
+    var bs=now(), rev=isRev(), act=hov!==null?hov:foc, f=frames[cur];
+    var cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+    function R(v){ var x=v[0]*cyw+v[2]*syw, z=-v[0]*syw+v[2]*cyw, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
+    function P(v){ var r=R([v[0]-cam.x, v[1]-cam.y, v[2]-cam.z]); return [CX+r[0]*cam.S, CY-r[1]*cam.S]; }
+    var list=[];
+    bs.forEach(function(b){
+      if (Math.min(b.d[0],b.d[1],b.d[2])<0.02) return;
+      var off=[b.c[0]-cam.x, b.c[1]-cam.y, b.c[2]-cam.z];
+      list.push({b:b, off:off, z:b.under ? -1e9 : R(off)[2]});
+    });
+    list.sort(function(a,b){ return a.z-b.z; });
+    var s='';
+    list.forEach(function(o){
+      var g=o.b.g, on=act!==null && g===act && !spec.noglow, dim=!o.b.under && (act!==null ? (g!==act) : !!o.b.dim);
+      s+='<g data-g="'+g+'"'+(dim?' opacity=".3"':'')+(on?' filter="url(#'+uid+'g)"':'')+'>'+boxSVG(o.b.d,CX,CY,cam.S,yaw,pitch,o.b.col,o.off)+'</g>';
+    });
+    sc.innerHTML=s;
+    var fp=P([cam.x, cam.fl, cam.z]), rx=cam.hz*cam.S+10;
+    shEl.setAttribute('cx',fp[0].toFixed(1)); shEl.setAttribute('cy',(fp[1]+4).toFixed(1));
+    shEl.setAttribute('rx',rx.toFixed(1)); shEl.setAttribute('ry',(rx*Math.max(0.12,sp)*0.8+3).toFixed(1));
+    var L='';
+    if (t>=1) (f.labels||[]).forEach(function(l){
+      var tx=val(l.t,rev); if (!tx) return;
+      var p=P(l.at), fs=l.fs||15, dim=act!==null ? (l.g!==undefined && l.g!==act) : !!l.dim, pill=l.pill;
+      L+='<g'+(l.g!==undefined?' data-g="'+l.g+'"':'')+(dim?' opacity=".35"':'')+'>';
+      if (pill){ var w=String(tx).length*fs*0.62+12; L+='<rect x="'+(p[0]-w/2).toFixed(1)+'" y="'+(p[1]-fs*0.95).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+(fs*1.3).toFixed(1)+'" rx="6" fill="'+(pill==='blue'?'#d6eafc':'#fde3c8')+'" stroke="'+(pill==='blue'?'#155a9c':'#a14f06')+'" stroke-width="1.5"/>'; }
+      L+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="middle" font-size="'+fs+'" font-weight="800" fill="'+(pill==='blue'?'#155a9c':pill==='orange'?'#a14f06':(l.col||COL.ink))+'"'+(pill?'':' stroke="#fff" stroke-width="4" paint-order="stroke"')+'>'+tx+'</text></g>';
+    });
+    lb.innerHTML=L;
+    var c=(act!==null && f.groups && f.groups[act]) ? val(f.groups[act].tip,rev) : val(f.cap,rev);
+    if (c!==lastCap){ capEl.innerHTML=c||''; lastCap=c; }
+  }
+  var lastT=0;
+  function tick(){
+    raf=0;
+    // smoothing is based on elapsed time, so slow tablets and fast screens move at the same speed
+    var tn=performance.now(), dt=clampN(tn-(lastT||tn-16),0,100), go=false;
+    lastT=tn;
+    var k=CALM?1:1-Math.exp(-dt/110), kr=CALM?1:1-Math.exp(-dt/80);
+    if (t<1){ t=DUR ? clampN((tn-t0)/DUR,0,1) : 1; go=true; }
+    var tg=camTarget();
+    ['x','y','z','S','hz','fl'].forEach(function(key){ var d=tg[key]-cam[key]; if (Math.abs(d)>(key==='S'?0.004*tg.S:0.03)) go=true; cam[key]+=d*k; });
+    yaw+=(tYaw-yaw)*kr; pitch+=(tPitch-pitch)*kr;
+    if (Math.abs(tYaw-yaw)>0.002 || Math.abs(tPitch-pitch)>0.002) go=true;
+    render();
+    if (go) raf=requestAnimationFrame(tick); else lastT=0;
+  }
+  function kick(){ if (!raf) raf=requestAnimationFrame(tick); }
+  function goTo(k){
+    k=clampN(k,0,frames.length-1);
+    A=now(); B=frames[k].boxes; cur=k; t=DUR?0:1; t0=performance.now(); foc=null; hov=null;
+    ui(); kick();
+  }
+  function gAt(e){
+    var el=e.target && e.target.closest ? e.target.closest('[data-g]') : null, g=el ? +el.getAttribute('data-g') : NaN;
+    return (isNaN(g) || g<0) ? null : g;
+  }
+  svg.addEventListener('pointermove', function(e){
+    var r=svg.getBoundingClientRect(); if (!r.width) return;
+    var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    if (down){
+      spin+=(e.clientX-down.x)*0.012; tPitch=clampN(tPitch+(e.clientY-down.y)*0.006,0.05,1.2); tYaw=Y0+spin;
+      if (Math.hypot(e.clientX-down.sx,e.clientY-down.sy)>6) down.moved=true;
+      down.x=e.clientX; down.y=e.clientY;
+    } else if (e.pointerType==='mouse'){
+      tYaw=Y0+spin+(px-0.5)*1.3; tPitch=clampN(P0+(py-0.5)*0.9,0.05,1.2); hov=gAt(e);
+    }
+    kick();
+  });
+  svg.addEventListener('pointerdown', function(e){ down={x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, moved:false, g:gAt(e)}; capture(svg,e); });
+  svg.addEventListener('pointerup', function(){ if (!down) return; var d=down; down=null; if (!d.moved){ foc=(d.g===null || d.g===foc) ? null : d.g; kick(); } });
+  svg.addEventListener('pointercancel', function(){ down=null; });
+  svg.addEventListener('pointerleave', function(){ if (down) return; tYaw=Y0+spin; tPitch=P0; hov=null; kick(); });
+  var ctl=spec.controls||{type:'none'}, bEls=[];
+  function btn(fn){ var b=document.createElement('button'); b.type='button'; b.addEventListener('click', fn); btnBox.appendChild(b); return b; }
+  if (ctl.type==='toggle') bEls=[btn(function(){ goTo(1-cur); })];
+  else if (ctl.type==='step'){ bEls=[btn(function(){ goTo(cur-1); }), btn(function(){ goTo(cur+1); })]; bEls[0].innerHTML=ctl.prev||'◀ Left × 10'; bEls[1].innerHTML=ctl.next||'Right ÷ 10 ▶'; }
+  else if (ctl.type==='pick') bEls=frames.map(function(f,k){ return btn(function(){ goTo(k); }); });
+  function ui(){
+    var rev=isRev();
+    if (ctl.type==='toggle') bEls[0].innerHTML=val(frames[cur].btn,rev);
+    else if (ctl.type==='step'){ bEls[0].disabled=cur<=0; bEls[1].disabled=cur>=frames.length-1; }
+    else if (ctl.type==='pick') bEls.forEach(function(b,k){ b.innerHTML=frames[k].name; b.classList.toggle('on',k===cur); b.setAttribute('aria-pressed',String(k===cur)); });
+  }
+  var api={page:host.closest('.page'), el:host, spec:spec,
+    show:function(){ if (!drawn){ ui(); render(); } },
+    refresh:function(){ var r=isRev(); if (r===lastRev) return; lastRev=r; if (drawn){ ui(); lastCap=null; render(); } },
+    replace:function(k,f,go){ frames[k]=f; if (go || k===cur) goTo(go?k:cur); else ui(); },
+    goTo:goTo, frame:function(){ return cur; }};
+  DEMOS.push(api);
+  return api;
+}
+
+/* ---------- model makers ---------- */
+// one block of place p taken apart into its 10 smaller blocks
+function split(p,o){
+  var q=p-1, dp=PD[p], dq=PD[q], ax=dp[0]!==dq[0]?0:dp[1]!==dq[1]?1:2, T=[], Ap=[], labs=[], i;
+  for (i=0;i<10;i++){
+    var c=[0,dp[1]/2,0]; c[ax]+=i-4.5;
+    T.push({d:dq.slice(), c:c, col:placeOf(p).color, g:0});
+    Ap.push({d:dq.slice(), c:[(i-4.5)*2.6, dq[1]/2, 0], col:placeOf(q).color, g:0});
+    labs.push({at:[(i-4.5)*2.6, dq[1]+1.8, 0], t:(function(k){ return function(rev){ return rev ? String(k+1) : ''; }; })(i), col:placeOf(q).color, fs:12});
+  }
+  return {qid:o.qid, controls:{type:'toggle'}, frames:[
+    {boxes:T, btn:'Take it apart ✂', cap:o.capT, groups:[{tip:o.tipT}]},
+    {boxes:Ap, btn:'Put it back together', cap:o.capA, groups:[{tip:o.tipA}], labels:labs}]};
+}
+// n blocks that grow (× 10) or shrink (÷ 10) one place at a time, from place hi down to place lo
+function ladder(n,hi,lo,start,o){
+  o=o||{}; var frames=[], ps=[], p;
+  for (p=hi;p>=lo;p--) ps.push(p);
+  function v(p,rev){ return (rev || !o.given || o.given.indexOf(p)>=0) ? (o.money?money(n,p):valStr(n,p)) : '?'; }
+  function who(p){ return (o.who && o.who[p] ? '<b>'+o.who[p]+'</b>: ' : '')+(o.tag && o.tag[p] ? '<span class="tag '+o.tag[p]+'">'+o.tag[p]+' '+n+'</span> ' : ''); }
+  ps.forEach(function(p){
+    var bs=row(n,p,0,0), back=0;
+    bs.forEach(function(b){ back=Math.min(back, b.c[2]); });      // the value floats above the back row
+    frames.push({boxes:bs,
+      groups:[{tip:who(p)+'<b>'+n+' '+pname(n,p)+'</b>. Each '+PN[p][0]+' is '+(o.money?money(1,p):PEACH[p])+'.'}],
+      labels:[{at:[0,PD[p][1]+3,back], t:function(rev){ return v(p,rev); }, col:placeOf(p).color, fs:20, pill:o.tag && o.tag[p]}],
+      cap:function(rev){
+        var s=who(p)+'<b>'+n+' '+pname(n,p)+'</b> = <b>'+v(p,rev)+'</b>';
+        if (p!==start){
+          var step=p>start?1:-1, ch='<br><span class="chain"><b>'+v(start,rev)+'</b>';
+          for (var q=start+step; step>0?q<=p:q>=p; q+=step) ch+=(step>0?'<i class="up">× 10</i>':'<i class="dn">÷ 10</i>')+'<b>'+v(q,rev)+'</b>';
+          s+=ch+'</span>';
+        } else s+='<br><span class="muted small">Press a button to make each block 10 times bigger or smaller.</span>';
+        return s;
+      }});
+  });
+  return {frames:frames, start:hi-start, qid:o.qid, controls:{type:'step'}};
+}
+// a decimal number shown as groups of blocks, read left to right like the written number
+function parseNum(s){
+  var pi=s.indexOf('.'), out=[]; if (pi<0) pi=s.length;
+  s.split('').forEach(function(ch,i){ if (ch!=='.') out.push({n:+ch||0, ch:ch, p:i<pi?pi-1-i:-(i-pi), i:i}); });
+  return out;
+}
+function numFrame(ds,o){
+  o=o||{}; var boxes=[], groups=[], labels=[], x=0, GAP=7, started=false;
+  var hasDec=ds.some(function(d){ return d.p<0; });
+  [1,0,-1,-2,-3].forEach(function(p){
+    var dg=null, k; ds.forEach(function(d){ if (d.p===p) dg=d; });
+    if (p===-1 && hasDec){ if (started) x+=GAP/2; labels.push({at:[x,0,9], t:'.', fs:30, col:COL.ink}); x+=GAP/2; started=false; }
+    var n=dg ? dg.n : 0;
+    if (dg && !n){ if (started) x+=GAP; labels.push({at:[x+1.5,0,9], t:dg.ch, col:'#8a99a8', dim:dg.dim}); x+=3; started=true; }
+    if (n){
+      var w=rowW(n,p); if (started) x+=GAP;
+      var cx=x+w/2, g=groups.length;
+      groups.push({tip:'<b>'+n+' '+pname(n,p)+'</b> in the <b style="color:'+placeOf(p).color+'">'+placeOf(p).name+'</b> place. Each '+PN[p][0]+' is '+PEACH[p]+'.'});
+      var front=5;
+      row(n,p,cx,g).forEach(function(b){ b.dim=!!dg.dim; boxes.push(b); front=Math.max(front, b.c[2]+b.d[2]/2); });
+      labels.push({at:[cx,0,front+4], t:dg.ch, col:placeOf(p).color, pill:dg.mark, g:g, dim:dg.dim});
+      x+=w; started=true;
+    }
+    for (k=n;k<9;k++) boxes.push({d:[0,0,0], c:[x,0,0], col:placeOf(p).color, g:-1});
+  });
+  return {boxes:boxes, groups:groups, labels:labels, cap:o.cap, name:o.name};
+}
+function numSpec(s,o){
+  var ds=parseNum(s); ds.forEach(function(d){ if (o.hl && o.hl[d.i]) d.mark=o.hl[d.i]; });
+  return {qid:o.qid, zoom:true, frames:[numFrame(ds,{cap:o.cap})]};
+}
+var TIP_TAP=HOVER?'Point at a group, or click it to zoom in.':'Tap a group to zoom in.';
+var WHO={'0':'Mariam','-1':'Omar','-2':'Lina'};
+var DSPEC={
+  s1a:function(){ return split(0,{qid:'s1a', tipT:'1 whole cube', tipA:'1 slice: <b>1 tenth</b> of the cube (0.1)',
+    capT:'This cube is <b>1 whole</b>. Take it apart into equal slices!',
+    capA:function(rev){ return rev ? '<b>10 tenths</b> make 1 whole.' : 'Each slice is <b>1 tenth</b>. How many slices make the whole cube?'; }}); },
+  s1b:function(){ return split(-1,{qid:'s1b', tipT:'1 flat: <b>1 tenth</b> (0.1)', tipA:'1 rod: <b>1 hundredth</b> (0.01)',
+    capT:'This flat is <b>1 tenth</b>. Take it apart into rods!',
+    capA:function(rev){ return rev ? '<b>10 hundredths</b> make 1 tenth.' : 'Each rod is <b>1 hundredth</b>. How many rods make one flat?'; }}); },
+  s3a:function(){ return ladder(1,0,-3,0,{qid:'s3a'}); },
+  s4a:function(){ return ladder(7,-1,-2,-1,{qid:'s4a'}); },
+  s4b:function(){ return ladder(3,0,-3,-2,{qid:'s4b', given:[-2]}); },
+  s5a:function(){ return ladder(6,-1,-2,-2,{qid:'s5a'}); },
+  s5b:function(){ return ladder(6,-1,-2,-1,{qid:'s5b'}); },
+  s6a:function(){ return ladder(4,0,-3,-3,{qid:'s6a'}); },
+  s6b:function(){ return ladder(7,1,-3,-3,{qid:'s6b'}); },
+  s7a:function(){ return ladder(5,0,-2,-1,{qid:'s7a', money:1, who:WHO}); },
+  s7b:function(){ return ladder(5,0,-2,-1,{qid:'s7b', money:1, who:WHO}); },
+  s7c:function(){ return ladder(7,0,-2,-1,{qid:'s7c', money:1, given:[-1]}); },
+  s7d:function(){ return ladder(7,0,-2,0,{qid:'s7d', money:1, given:[0]}); },
+  s8a:function(){ return numSpec('5.377',{qid:'s8a', hl:{3:'blue'}, cap:'<b>5.377</b> in blocks. Find the <span class="tag blue">blue 7</span>. '+TIP_TAP}); },
+  s8b:function(){ return numSpec('5.377',{qid:'s8b', hl:{4:'orange'}, cap:'<b>5.377</b> in blocks. Find the <span class="tag orange">orange 7</span>. '+TIP_TAP}); },
+  s8c:function(){ return ladder(7,-2,-3,-3,{qid:'s8c', tag:{'-2':'blue','-3':'orange'}}); },
+  s8d:function(){ return numSpec('4.419',{qid:'s8d', hl:{0:'blue'}, cap:'<b>4.419</b> in blocks. Find the <span class="tag blue">blue 4</span>. '+TIP_TAP}); },
+  s8e:function(){ return numSpec('4.419',{qid:'s8e', hl:{2:'orange'}, cap:'<b>4.419</b> in blocks. Find the <span class="tag orange">orange 4</span>. '+TIP_TAP}); },
+  s8f:function(){ return ladder(4,0,-1,-1,{qid:'s8f', tag:{'0':'blue','-1':'orange'}}); },
+  s9a:function(){ return numSpec('45.4',{qid:'s9a', hl:{0:'blue',3:'orange'}, cap:'<b>45.4</b> in blocks. Compare the <span class="tag blue">blue 4</span> and the <span class="tag orange">orange 4</span>. '+TIP_TAP}); },
+  s9b:function(){ return ladder(4,1,-1,-1,{qid:'s9b'}); },
+  s10:function(){
+    return {qid:'s10', zoom:true, controls:{type:'pick'}, frames:['3.462','2.615','6.243','1.356','9.68','0.564'].map(function(s,k){
+      var ds=parseNum(s); ds.forEach(function(d){ if (d.ch==='6') d.mark='blue'; else d.dim=true; });
+      return numFrame(ds,{name:s, cap:(k ? '<b>'+s+'</b>: is this 6 worth 10 times the 6 in 3.462?' : '<b>3.462</b>: here is the 6 you start with.')+' Pick another number.'});
+    })};
+  },
+  s11a:function(){ return numSpec('22.2',{qid:'s11a', cap:'<b>22.2</b> in blocks: three 2s, three different sizes. '+TIP_TAP}); },
+  s11b:function(){ return ladder(2,1,-1,-1,{qid:'s11b'}); }
+};
+// builders: compare 3.68 with the number the student builds; the digit to watch is marked
+function builderSpec(qid,mark){
+  function ds(arr){ return arr.map(function(dg,k){ return {n:dg==null?0:dg, ch:dg==null?'?':String(dg), p:-k, mark:dg===mark?'blue':null}; }); }
+  function mine(arr){
+    var str=arr.map(function(d){ return d==null?'?':d; }), full=arr.indexOf(null)<0;
+    return numFrame(ds(arr),{name:'My number', cap:full ? 'Your number <b>'+str[0]+'.'+str[1]+str[2]+'</b>. Find the '+mark+'. '+TIP_TAP : 'Your number so far: <b>'+str[0]+'.'+str[1]+str[2]+'</b>. Fill every box.'});
+  }
+  return {qid:qid, zoom:true, controls:{type:'pick'}, mine:mine, frames:[
+    numFrame(ds([3,6,8]),{name:'3.68', cap:'<b>3.68</b> in blocks. Find the '+mark+'. '+TIP_TAP}), mine([null,null,null])]};
+}
+// page 2: the student's shaded grid, raised in 3D
+function gridSpec(){
+  return {dur:360, zcap:17, pitch:0.7, noglow:1, frames:[gridFrame([])]};
+}
+function gridFrame(on){
+  var bs=[{d:[10,0.4,10], c:[0,0.2,0], col:'#e9f0f7', g:-1, under:1}], r, c, n=0;
+  for (r=0;r<10;r++) for (c=0;c<10;c++){ var h=on[r*10+c]?1:0; n+=h; bs.push({d:[0.9,h,0.9], c:[c-4.5,0.4+h/2,r-4.5], col:'#1769aa', g:0, nofit:1}); }
+  return {boxes:bs, groups:[{tip:'Each raised block is <b>1 hundredth</b> (0.01) of the grid.'}],
+    cap:n ? 'Your grid in 3D: <b>'+n+'</b> raised block'+(n===1?'':'s')+' = <b>'+(n/100)+'</b>' : 'Shade the grid. The squares pop up here in 3D.'};
+}
+function attach3D(el,id){
+  var mk=DSPEC[id]; if (!mk) return null;
+  var main=document.createElement('div'), box=document.createElement('div'); main.className='qmain';
+  while (el.firstChild) main.appendChild(el.firstChild);
+  el.appendChild(main); el.appendChild(box); el.classList.add('has3d');
+  return Demo3D(box, mk());
 }
 
 function pvChart(ps, cell){
@@ -1132,6 +1466,8 @@ function setupBuilder(el,id,cfg){
     tray.innerHTML='';
     cfg.digits.forEach(function(dg,i){ if (slots.indexOf(i)<0) tray.appendChild(tileEl(i)); });
     slotEls.forEach(function(s,k){ s.innerHTML=''; s.classList.toggle('filled', slots[k]!==null); if (slots[k]!==null) s.appendChild(tileEl(slots[k])); });
+    var key=slots.join(',');
+    if (cfg.onDraw && key!==cfg.lastKey){ cfg.lastKey=key; cfg.onDraw(slots.map(function(i){ return i===null ? null : cfg.digits[i]; })); }
   }
   slotEls.forEach(function(s,k){
     s.addEventListener('click', function(e){ if (e.target===s) tapSlot(k); });
@@ -1194,6 +1530,7 @@ function show(i, quiet){
   void pages[i].offsetWidth; pages[i].classList.add(dir);
   state.idx=i; save();
   if (hero) hero.active(i===0);
+  DEMOS.forEach(function(d){ if (d.page===pages[i]) d.show(); });
   var sw=$('.stage-wrap',pages[i]); if (sw){ sw.classList.remove('popup'); void sw.offsetWidth; sw.classList.add('popup'); }
   if (pages[i].getAttribute('data-results')) renderResults();
   $$('#dots button').forEach(function(b,k){ b.classList.toggle('on',k===i); });
@@ -1226,22 +1563,31 @@ setupBigNums();
 $$('[data-q]').forEach(function(el){
   var id=el.getAttribute('data-q'), q=Q[id]; reg(id,el);
   if (q.type==='multi') renderMulti(el,id,q); else if (q.type==='num') renderNum(el,id,q); else renderChoice(el,id,q);
+  attach3D(el,id);
 });
-setupBuilder($('#build1'),'b1',{digits:[3,6,8],
+[[$('#build1'),'b1',8,{digits:[3,6,8],
   prompt:'<b>A.</b> Build a number where the <b>8</b> is worth <b>10 times</b> the 8 in 3.68.',
   test:function(n){ return n[1]===8; },
   hint:'In 3.68 the 8 is 8 hundredths (0.08). 10 times as much is 0.8. Which place is that?',
-  explain:'The 8 is in the tenths place (0.8), and 0.8 is 10 times 0.08.'});
-setupBuilder($('#build2'),'b2',{digits:[3,6,8],
+  explain:'The 8 is in the tenths place (0.8), and 0.8 is 10 times 0.08.'}],
+ [$('#build2'),'b2',6,{digits:[3,6,8],
   prompt:'<b>B.</b> Build a number where the <b>6</b> is worth <b>'+TENTH+'</b> of the 6 in 3.68.',
   test:function(n){ return n[2]===6; },
   hint:'In 3.68 the 6 is 6 tenths (0.6). '+TENTH+' of that is 0.06. Which place is that?',
-  explain:'The 6 is in the hundredths place (0.06), and 0.06 is '+TENTH+' of 0.6.'});
+  explain:'The 6 is in the hundredths place (0.06), and 0.06 is '+TENTH+' of 0.6.'}]].forEach(function(a){
+  var demo=null, last=null;
+  // the 3D model follows the tiles: each change shows the student's own number in blocks
+  a[3].onDraw=function(arr){ last=arr; if (demo) demo.replace(1, demo.spec.mine(arr), true); };
+  setupBuilder(a[0],a[1],a[3]);
+  DSPEC[a[1]]=function(){ return builderSpec(a[1],a[2]); };
+  demo=attach3D(a[0],a[1]);
+  if (last) demo.replace(1, demo.spec.mine(last), false);
+});
 setupWriting();
 updateReveals();
 updateScore(false);
 show(state.idx||0, true);
-window.__lesson={state:state, GRADED:GRADED, Q:Q, show:show};
+window.__lesson={state:state, GRADED:GRADED, Q:Q, show:show, DEMOS:DEMOS};
 })();
 </script>
 </body>
