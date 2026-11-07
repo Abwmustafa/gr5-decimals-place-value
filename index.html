@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Decimal Place Value</title>
+<meta name="description" content="Grade 5 interactive lesson 3-2: extend place value to decimals.">
+<style>
+:root{
+  --bg:#eef4fb; --card:#ffffff; --ink:#1b2a3a; --muted:#566676; --line:#d3deea;
+  --brand:#1769aa; --brand-dark:#0e4a7a; --brand-soft:#dcebf8;
+  --hunds:#34495e; --tens:#5d6d7e; --ones:#2e86de; --tenths:#119c7f; --hund:#e07b16; --thou:#8e44ad;
+  --ok:#1e7e34; --ok-soft:#e2f3e6; --bad:#b83227; --bad-soft:#fbe6e3; --note:#fff6d6;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5;-webkit-text-size-adjust:100%}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+header.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.top-inner{max-width:780px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:12px}
+.top-title{font-weight:700;font-size:15px;color:var(--brand-dark);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-count{font-size:14px;color:var(--muted);white-space:nowrap}
+.bar{height:6px;background:var(--brand-soft)}
+.bar>i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
+main{max-width:780px;margin:0 auto;padding:16px 16px 112px}
+section.screen{display:none}
+section.screen.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:18px;padding:18px;margin:0 0 16px;box-shadow:0 1px 3px rgba(20,40,70,.08)}
+.card.note,.note{background:var(--note)}
+.note{border-radius:14px;padding:14px;margin-top:12px}
+.kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--brand);border-radius:999px;padding:3px 12px;margin-bottom:8px}
+.kicker.green{background:var(--tenths)}.kicker.orange{background:var(--hund)}.kicker.purple{background:var(--thou)}
+h1{font-size:30px;line-height:1.2;margin:4px 0 10px}
+h2{font-size:24px;line-height:1.25;margin:2px 0 10px}
+h3{font-size:19px;margin:0 0 8px}
+p{margin:0 0 12px}
+ul{margin:6px 0 0;padding-left:22px}
+.muted{color:var(--muted)}
+.small{font-size:15px}
+.center{text-align:center}
+.btn{appearance:none;border:0;border-radius:14px;padding:12px 20px;font-weight:700;min-height:50px;cursor:pointer;background:var(--brand);color:#fff}
+.btn.ghost{background:var(--brand-soft);color:var(--brand-dark)}
+.btn.small{min-height:44px;padding:8px 16px;font-size:16px}
+.btn:disabled{opacity:.35;cursor:default}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:5}
+.nav-inner{max-width:780px;margin:0 auto;display:flex;gap:12px;justify-content:space-between}
+.nav-inner .btn{min-width:120px}
+/* questions */
+.q{padding:14px 0;border-top:1px dashed var(--line)}
+.q:first-child{border-top:0;padding-top:4px}
+.prompt{font-weight:600;margin-bottom:10px}
+.opts{display:grid;gap:10px}
+.opts.inline{grid-template-columns:repeat(var(--n,3),minmax(0,1fr))}
+@media (max-width:520px){.opts.inline.n4{grid-template-columns:repeat(2,1fr)}.opts.inline.n5{grid-template-columns:repeat(3,1fr)}}
+.opt{appearance:none;text-align:left;color:var(--ink);background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opts.inline .opt{justify-content:center;text-align:center;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.sel{border-color:var(--brand);background:var(--brand-soft)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);opacity:.8}
+.opt:disabled{cursor:default}
+.letter{flex:none;width:30px;height:30px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark);font-weight:700;display:grid;place-items:center;font-size:15px}
+.fb{margin-top:10px;border-radius:12px;font-size:17px}
+.fb.show{padding:10px 14px}
+.fb.ok{background:var(--ok-soft);color:#14501f}
+.fb.no{background:var(--bad-soft);color:#7a1f17}
+.blank{display:inline-block;min-width:74px;border-bottom:3px solid var(--brand);text-align:center;font-weight:700;color:var(--brand-dark);padding:0 6px}
+.blank.filled{border-color:var(--ok);color:var(--ok)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.78em;line-height:1.05;margin:0 2px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 2px}
+input.num{font:inherit;font-weight:700;width:110px;padding:6px 10px;border:2px solid var(--brand);border-radius:10px;text-align:center}
+input.num.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.check{margin-top:10px}
+/* welcome */
+.targets{background:var(--brand-soft);border-radius:14px;padding:12px 16px;margin:14px 0}
+.namefield{display:block;font-weight:700;margin:14px 0 6px}
+.namefield input{display:block;width:100%;max-width:360px;margin-top:6px;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px}
+/* models */
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.model{appearance:none;background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink)}
+.model svg{width:100%;max-width:120px;height:auto}
+.model.open{border-color:var(--brand);background:#fff}
+.mlabel{font-size:14px;line-height:1.3;text-align:center}
+.tapme{font-size:13px;color:var(--brand);font-weight:700}
+/* grid explorer */
+.seg{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0 12px}
+.seg button{appearance:none;border:2px solid var(--brand);background:#fff;color:var(--brand-dark);border-radius:999px;padding:8px 14px;font-weight:700;font-size:15px;cursor:pointer;min-height:44px}
+.seg button.on{background:var(--brand);color:#fff}
+.grid100{display:grid;grid-template-columns:repeat(10,1fr);width:min(100%,340px);aspect-ratio:1;border:2.5px solid var(--ink);margin:0 auto;touch-action:manipulation;background:#fff}
+.grid100 button{appearance:none;border:0;border-right:1px solid #9fb3c8;border-bottom:1px solid #9fb3c8;background:#fff;padding:0;margin:0;cursor:pointer;min-width:0}
+.grid100 button.on{background:var(--brand)}
+.readout{text-align:center;font-size:20px;margin:12px 0 8px}
+.pair{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
+.pair figure{margin:0;text-align:center}
+.pair figcaption{font-size:16px;margin-top:4px}
+/* place value chart */
+.pv{display:grid;border:2px solid var(--brand-dark);border-radius:12px;overflow:hidden;background:#fff;max-width:620px;margin:6px auto}
+.pv .h{font-size:clamp(10px,2.8vw,14px);font-weight:700;color:#fff;text-align:center;padding:6px 2px;line-height:1.15;display:flex;align-items:center;justify-content:center}
+.pv .d{font-size:clamp(26px,7vw,40px);font-weight:800;text-align:center;padding:6px 0;border-left:1px solid var(--line);font-variant-numeric:tabular-nums;min-height:62px;display:flex;align-items:center;justify-content:center}
+.pv .d.pt{border-left:0;padding:0}
+.pv .d.ph{color:#b7c4d1}
+.pv .d.hot{background:var(--brand-soft)}
+.digit{appearance:none;border:3px solid currentColor;background:#fff;border-radius:12px;font-size:clamp(26px,7vw,38px);font-weight:800;width:min(56px,90%);height:56px;cursor:pointer;line-height:1;display:grid;place-items:center}
+.digit.seen{background:currentColor}
+.digit.seen span{color:#fff}
+.info{background:#f7fafd;border-radius:14px;padding:12px 14px;margin-top:12px;min-height:56px}
+.info .blk{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.blockrow{display:flex;align-items:flex-end;justify-content:center;gap:6px 10px;flex-wrap:wrap;margin:8px 0 12px}
+.blockrow figure{margin:0;text-align:center;font-size:14px}
+.blockrow .arrow{font-size:13px;color:var(--muted);align-self:center;font-weight:700}
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 14px}
+.rule>div{border-radius:14px;padding:10px;text-align:center;font-size:15px;line-height:1.35}
+.rule big{display:block;font-size:26px;font-weight:800;margin:2px 0}
+.rule .l{background:#e1f0fb;color:#0e4a7a}
+.rule .r{background:#fdeedd;color:#8a4a0c}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.bigval{font-size:30px;font-weight:800}
+/* practice bits */
+.wallets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 8px}
+.wallet{background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.wallet b{display:block}
+.wallet span{font-size:20px;font-weight:800;color:var(--brand-dark)}
+.bignum{font-size:46px;font-weight:800;text-align:center;letter-spacing:.06em;margin:4px 0 10px;font-variant-numeric:tabular-nums}
+.hl{border-radius:8px;padding:0 4px}
+.hl.blue{background:#d6eafc;color:#155a9c}
+.hl.orange{background:#fde3c8;color:#a14f06}
+.bignum .hl{border-bottom:5px solid currentColor}
+.speech{background:#f3eafa;border-radius:16px;padding:12px 16px;margin:4px 0 12px;position:relative}
+.steps{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-weight:800;font-size:22px;margin:8px 0}
+.steps i{font-style:normal;font-size:14px;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 10px}
+/* builder */
+.tray{display:flex;gap:10px;justify-content:center;min-height:68px;margin:10px 0;align-items:center}
+.tile{appearance:none;width:56px;height:60px;border-radius:12px;border:3px solid var(--brand);background:#fff;color:var(--ink);font-size:30px;font-weight:800;cursor:pointer;transition:transform .12s}
+.tile.sel{background:var(--brand);color:#fff;transform:translateY(-4px)}
+.slots{display:flex;align-items:flex-start;justify-content:center;gap:6px}
+.slot-wrap{display:flex;flex-direction:column;align-items:center;font-size:13px;color:var(--muted);gap:2px}
+.slot{appearance:none;width:64px;height:72px;border:3px dashed #8aa4bf;border-radius:12px;background:#f7fafd;color:var(--ink);font-size:34px;font-weight:800;cursor:pointer}
+.slot.filled{border-style:solid;border-color:var(--brand);background:#fff}
+.point{font-size:46px;font-weight:900;line-height:72px}
+/* reflect */
+textarea{width:100%;min-height:120px;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px;resize:vertical}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--brand-dark);padding:6px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px}
+.chip.sel{border-color:var(--tenths);background:#dff4ee}
+/* results */
+.stars{font-size:52px;color:#f2b705;letter-spacing:6px;line-height:1.1}
+.score{font-size:26px}
+.review{text-align:left;max-width:460px;margin:10px auto 0}
+@media (max-width:420px){
+  h1{font-size:26px} h2{font-size:21px}
+  .card{padding:14px}
+  .models{gap:6px}
+  .mlabel{font-size:12.5px}
+  .bignum{font-size:40px}
+  .wallets{gap:6px}.wallet span{font-size:17px}
+  .slot{width:56px;height:66px}.point{line-height:66px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner"><div class="top-title" id="topTitle">Lesson 3-2 · Decimals</div><div class="top-count" id="topCount"></div></div>
+  <div class="bar"><i id="bar"></i></div>
+</header>
+
+<main id="main">
+<noscript><div class="card">This lesson needs JavaScript. Please open it in a normal web browser.</div></noscript>
+
+<!-- 0 Welcome -->
+<section class="screen" data-title="Welcome">
+  <div class="card">
+    <span class="kicker">Grade 5 · Unit 3 · Lesson 3-2</span>
+    <h1>Extend Place Value to Decimals</h1>
+    <p>The same digit can be worth very different amounts. It all depends on its place, even after the decimal point.</p>
+    <div class="targets"><b>Today I can…</b>
+      <ul>
+        <li>tell the value of a digit in the tenths, hundredths and thousandths places</li>
+        <li>explain that a digit is worth <b>10 times</b> as much one place to the left, and <b><span class="frac"><span>1</span><span>10</span></span></b> as much one place to the right</li>
+      </ul>
+    </div>
+    <label class="namefield">Your name<input id="name" type="text" autocomplete="off" maxlength="40" placeholder="Type your name"></label>
+    <p class="muted small">Your name and answers stay on this device. Tap an answer to check it. Your <b>first try</b> counts for your score, and you can keep trying until you get it right.</p>
+  </div>
+</section>
+
+<!-- 1 Be Curious -->
+<section class="screen" data-title="Be Curious" data-topic="Tenths and hundredths models">
+  <div class="card">
+    <span class="kicker">Be Curious</span>
+    <h2>What do you notice? What do you wonder?</h2>
+    <p>The three big squares are all the same size. Tap each one.</p>
+    <div class="models">
+      <button type="button" class="model" data-svg="one"><span class="tapme">Tap me</span><span class="mlabel" hidden>The whole square is shaded: <b>1 whole</b></span></button>
+      <button type="button" class="model" data-svg="tenth"><span class="tapme">Tap me</span><span class="mlabel" hidden>1 of 10 equal strips: <b>1 tenth</b> = <span class="frac"><span>1</span><span>10</span></span> = 0.1</span></button>
+      <button type="button" class="model" data-svg="hundredth"><span class="tapme">Tap me</span><span class="mlabel" hidden>1 of 100 equal squares: <b>1 hundredth</b> = <span class="frac"><span>1</span><span>100</span></span> = 0.01</span></button>
+    </div>
+  </div>
+  <div class="card"><div class="q" data-q="s1a"></div><div class="q" data-q="s1b"></div></div>
+</section>
+
+<!-- 2 Explore grid -->
+<section class="screen" data-title="Shade the grid" data-topic="Shading tenths and hundredths">
+  <div class="card">
+    <span class="kicker green">Explore</span>
+    <h2>Shade the grid</h2>
+    <p>The big square is 1 whole, cut into 100 small squares. Pick a tool, then tap the grid.</p>
+    <div class="seg" role="group" aria-label="Shading tool">
+      <button type="button" data-tool="tenth" class="on">Tenth: a whole column</button>
+      <button type="button" data-tool="hundredth">Hundredth: one square</button>
+    </div>
+    <div class="grid100" id="grid100"></div>
+    <p class="readout" id="gridRead" aria-live="polite"></p>
+    <div class="center"><button type="button" class="btn ghost small" id="gridClear">Clear the grid</button></div>
+  </div>
+  <div class="card" id="gridTask"></div>
+  <div class="card note" data-reveal-when="g1 g2" hidden>
+    <h3>Compare them</h3>
+    <div class="pair"><figure><div data-gridsvg="30"></div><figcaption><b>0.3</b></figcaption></figure><figure><div data-gridsvg="3"></div><figcaption><b>0.03</b></figcaption></figure></div>
+    <p><b>0.3</b> is <b>10 times</b> as much as 0.03. And <b>0.03</b> is <b><span class="frac"><span>1</span><span>10</span></span> of</b> 0.3.</p>
+  </div>
+</section>
+
+<!-- 3 Digit detective -->
+<section class="screen" data-title="Digit Detective" data-topic="Value of each digit in 1.111">
+  <div class="card">
+    <span class="kicker">Learn</span>
+    <h2>Digit Detective: 1.111</h2>
+    <p>Sam says: “Every 1 in <b>1.111</b> has the same value.” Tap each 1 to find out what it is really worth.</p>
+    <div id="ddChart"></div>
+    <div class="info" id="ddInfo" aria-live="polite">Tap a digit in the chart.</div>
+  </div>
+  <div class="card note" data-reveal-when="flag:dd" hidden>
+    <h3>All four blocks at the same scale</h3>
+    <div class="blockrow" id="ddRow"></div>
+    <p>Each block is <b><span class="frac"><span>1</span><span>10</span></span></b> the size of the block on its left. So each 1 is worth <span class="frac"><span>1</span><span>10</span></span> of the 1 on its left, and <b>10 times</b> the 1 on its right.</p>
+  </div>
+  <div class="card"><div class="q" data-q="s3a"></div></div>
+</section>
+
+<!-- 4 Move the digit -->
+<section class="screen" data-title="Move the digit" data-topic="Moving a digit left or right">
+  <div class="card">
+    <span class="kicker">Learn</span>
+    <h2>Move the digit</h2>
+    <div class="rule">
+      <div class="l">◀ One place <b>left</b><big>× 10</big>10 times as much</div>
+      <div class="r">One place <b>right</b> ▶<big>÷ 10</big><span class="frac"><span>1</span><span>10</span></span> as much</div>
+    </div>
+    <div id="slChart"></div>
+    <p class="readout" id="slVal"></p>
+    <div class="ctrl">
+      <button type="button" class="btn" id="slLeft">◀ Left</button>
+      <button type="button" class="btn" id="slRight">Right ▶</button>
+    </div>
+    <div class="center"><button type="button" class="btn ghost small" id="slDigit">Try a new digit</button></div>
+    <p class="info" id="slMsg" aria-live="polite">Move the digit left and right. Watch its value.</p>
+  </div>
+  <div class="card"><div class="q" data-q="s4a"></div><div class="q" data-q="s4b"></div></div>
+</section>
+
+<!-- 5 Work together -->
+<section class="screen" data-title="0.6 and 0.06" data-topic="Comparing 0.6 and 0.06">
+  <div class="card">
+    <span class="kicker green">Work Together</span>
+    <h2>Two ways to compare 0.6 and 0.06</h2>
+    <div class="pair"><figure><div data-gridsvg="60"></div><figcaption><b>0.6</b><br>6 tenths</figcaption></figure><figure><div data-gridsvg="6"></div><figcaption><b>0.06</b><br>6 hundredths</figcaption></figure></div>
+    <div class="q" data-q="s5a"></div>
+    <div class="q" data-q="s5b"></div>
+    <div class="note" data-reveal-when="s5a s5b" hidden><b>Two ways to say it:</b><br>0.6 is 10 times 0.06.<br>0.06 is <span class="frac"><span>1</span><span>10</span></span> of 0.6.</div>
+  </div>
+</section>
+
+<!-- 6 Which is true -->
+<section class="screen" data-title="Which is true?" data-topic="Which statement is true">
+  <div class="card">
+    <span class="kicker orange">Practice</span>
+    <h2>Which statement is true?</h2>
+    <div class="q" data-q="s6a"></div>
+    <div class="q" data-q="s6b"></div>
+  </div>
+</section>
+
+<!-- 7 Money -->
+<section class="screen" data-title="Pocket money" data-topic="Money: 10 times and 1/10 of">
+  <div class="card">
+    <span class="kicker orange">Practice</span>
+    <h2>Pocket money</h2>
+    <div class="wallets">
+      <div class="wallet"><b>Mariam</b><span>AED 5.00</span></div>
+      <div class="wallet"><b>Omar</b><span>AED 0.50</span></div>
+      <div class="wallet"><b>Lina</b><span>AED 0.05</span></div>
+    </div>
+    <div class="q" data-q="s7a"></div>
+    <div class="q" data-q="s7b"></div>
+    <div class="q" data-q="s7c"></div>
+    <div class="q" data-q="s7d"></div>
+  </div>
+</section>
+
+<!-- 8 Same digit -->
+<section class="screen" data-title="Same digit, different value" data-topic="Same digit in different places">
+  <div class="card">
+    <span class="kicker orange">Practice</span>
+    <h2>Same digit, different value</h2>
+    <p class="bignum">5.3<span class="hl blue">7</span><span class="hl orange">7</span></p>
+    <div class="q" data-q="s8a"></div><div class="q" data-q="s8b"></div><div class="q" data-q="s8c"></div>
+  </div>
+  <div class="card">
+    <p class="bignum"><span class="hl blue">4</span>.<span class="hl orange">4</span>19</p>
+    <div class="q" data-q="s8d"></div><div class="q" data-q="s8e"></div><div class="q" data-q="s8f"></div>
+  </div>
+</section>
+
+<!-- 9 Error analysis -->
+<section class="screen" data-title="Error analysis" data-topic="Digits two places apart">
+  <div class="card">
+    <span class="kicker purple">Error Analysis</span>
+    <h2>Is Rami right?</h2>
+    <div class="speech">Rami writes <b>45.4</b> and says: “The 4 in the tens place is worth 10 times the 4 in the tenths place.”</div>
+    <p class="bignum"><span class="hl blue">4</span>5.<span class="hl orange">4</span></p>
+    <div class="q" data-q="s9a"></div>
+    <div class="q" data-q="s9b"></div>
+    <div class="note" data-reveal-when="s9b" hidden>
+      <div class="steps"><span>0.4</span><i>× 10</i><span>4</span><i>× 10</i><span>40</span></div>
+      Tenths to tens is <b>two</b> places left, so the value is 10 × 10 = <b>100 times</b> as much.
+    </div>
+  </div>
+</section>
+
+<!-- 10 Digit hunt -->
+<section class="screen" data-title="Digit hunt" data-topic="Finding a digit 10 times as much">
+  <div class="card">
+    <span class="kicker orange">Practice</span>
+    <h2>Digit hunt</h2>
+    <div class="q" data-q="s10"></div>
+  </div>
+</section>
+
+<!-- 11 Race -->
+<section class="screen" data-title="Race time" data-topic="Three 2s in 22.2">
+  <div class="card">
+    <span class="kicker green">Real Life</span>
+    <h2>Race time: 22.2 seconds</h2>
+    <p>In a school race, Huda ran 100 metres in <b>22.2 seconds</b>. The digit 2 appears three times!</p>
+    <div id="raceChart"></div>
+    <div class="q" data-q="s11a"></div>
+    <div class="q" data-q="s11b"></div>
+  </div>
+</section>
+
+<!-- 12 Build -->
+<section class="screen" data-title="Build a number" data-topic="Build a number">
+  <div class="card">
+    <span class="kicker purple">Extend Your Thinking</span>
+    <h2>Build a number</h2>
+    <p>Use the digits <b>3</b>, <b>6</b> and <b>8</b> once each. Compare with the number <b>3.68</b>.</p>
+    <div class="q" id="build1"></div>
+  </div>
+  <div class="card"><div class="q" id="build2"></div></div>
+</section>
+
+<!-- 13 Reflect -->
+<section class="screen" data-title="Reflect">
+  <div class="card">
+    <span class="kicker">Reflect</span>
+    <h2>Think about it</h2>
+    <p class="prompt">How is the place value pattern in decimals like the pattern in whole numbers?</p>
+    <textarea id="reflect" placeholder="Write your idea here…"></textarea>
+    <details><summary>See an example answer</summary>
+      <p>It is the same pattern on both sides of the decimal point. Each place is worth 10 times the place to its right, and <span class="frac"><span>1</span><span>10</span></span> of the place to its left. For example, 300 is 10 times 30, and 0.3 is 10 times 0.03.</p>
+    </details>
+  </div>
+  <div class="card">
+    <h3>Feelings check</h3>
+    <p>When you feel angry or upset, what helps you calm down? Pick any.</p>
+    <div class="chips" id="chips"></div>
+  </div>
+</section>
+
+<!-- 14 Results -->
+<section class="screen" data-title="Your results" data-show="results">
+  <div class="card center" id="results"></div>
+  <div class="card center"><button type="button" class="btn ghost" id="restart">Start again</button></div>
+</section>
+</main>
+
+<nav class="bottom"><div class="nav-inner">
+  <button type="button" class="btn ghost" id="back">◀ Back</button>
+  <button type="button" class="btn" id="next">Next ▶</button>
+</div></nav>
+
+<script>
+(function () {
+'use strict';
+var KEY = 'g5-lesson-3-2-decimals-v1';
+var COL = {hunds:'#34495e', tens:'#5d6d7e', ones:'#2e86de', tenths:'#119c7f', hund:'#e07b16', thou:'#8e44ad', ink:'#1b2a3a', brand:'#1769aa'};
+var PLACES = [
+  {p:2,  label:'Hun&shy;dreds',      name:'hundreds',    color:COL.hunds},
+  {p:1,  label:'Tens',               name:'tens',        color:COL.tens},
+  {p:0,  label:'Ones',               name:'ones',        color:COL.ones},
+  {p:-1, label:'Tenths',             name:'tenths',      color:COL.tenths},
+  {p:-2, label:'Hun&shy;dredths',    name:'hundredths',  color:COL.hund},
+  {p:-3, label:'Thou&shy;sandths',   name:'thousandths', color:COL.thou}
+];
+function placeOf(p){ for (var i=0;i<PLACES.length;i++) if (PLACES[i].p===p) return PLACES[i]; }
+function frac(n,d){ return '<span class="frac"><span>'+n+'</span><span>'+d+'</span></span>'; }
+var TENTH = frac(1,10);
+function pow10(p){ return Math.pow(10,p); }
+function valStr(d,p){ return p>=0 ? (d*pow10(p)).toLocaleString('en-US') : '0.'+new Array(-p).join('0')+d; }
+function denom(p){ return pow10(-p).toLocaleString('en-US'); }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+/* ---------- state ---------- */
+var state = {name:'', idx:0, items:{}, reflect:'', mind:[]};
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function load(){ try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && typeof s==='object' && s.items) { for (var k in state) if (k in s) state[k]=s[k]; } } catch (e) {} }
+function item(id){ return state.items[id] || (state.items[id] = {tries:0, first:null, solved:false}); }
+function record(id, ok){ var it=item(id); it.tries++; if (it.first===null) it.first=!!ok; if (ok) it.solved=true; save(); }
+function solved(id){ return !!(state.items[id] && state.items[id].solved); }
+function setFlag(id){ var it=item(id); it.solved=true; save(); updateReveals(); }
+
+var GRADED = [], TOPIC = {};
+function reg(id, el){ if (GRADED.indexOf(id)<0) { GRADED.push(id); var sec=el.closest('section'); TOPIC[id]=(sec && sec.getAttribute('data-topic')) || ''; } }
+
+function updateReveals(){
+  $$('[data-reveal-when]').forEach(function(el){
+    var ids = el.getAttribute('data-reveal-when').split(/\s+/);
+    el.hidden = !ids.every(solved);
+  });
+}
+function sizeOpts(box, n){ box.style.setProperty('--n', n); box.classList.add('n'+n); }
+function fb(el, ok, html){ el.className = 'fb show ' + (ok ? 'ok' : 'no'); el.innerHTML = html; }
+
+/* ---------- SVG helpers ---------- */
+function squareSVG(kind){
+  var S=120, u=12, s='<svg viewBox="-2 -2 124 124" aria-hidden="true">';
+  s += '<rect width="'+S+'" height="'+S+'" fill="'+(kind==='one'?COL.ones:'#fff')+'"/>';
+  if (kind==='tenth') s += '<rect width="'+u+'" height="'+S+'" fill="'+COL.tenths+'"/>';
+  if (kind==='hundredth') s += '<rect width="'+u+'" height="'+u+'" fill="'+COL.hund+'"/>';
+  if (kind!=='one') for (var i=1;i<10;i++) {
+    s += '<line x1="'+i*u+'" y1="0" x2="'+i*u+'" y2="'+S+'" stroke="#34495e" stroke-width="1"/>';
+    if (kind==='hundredth') s += '<line x1="0" y1="'+i*u+'" x2="'+S+'" y2="'+i*u+'" stroke="#34495e" stroke-width="1"/>';
+  }
+  return s + '<rect width="'+S+'" height="'+S+'" fill="none" stroke="'+COL.ink+'" stroke-width="2.5"/></svg>';
+}
+function gridSVG(n){ // n hundredths, shaded a column at a time
+  var S=110, u=11, s='<svg viewBox="-2 -2 114 114" width="110" height="110" aria-hidden="true"><rect width="110" height="110" fill="#fff"/>';
+  for (var k=0;k<n;k++) s += '<rect x="'+Math.floor(k/10)*u+'" y="'+(k%10)*u+'" width="'+u+'" height="'+u+'" fill="'+COL.brand+'"/>';
+  for (var i=1;i<10;i++) s += '<line x1="'+i*u+'" y1="0" x2="'+i*u+'" y2="'+S+'" stroke="#9fb3c8"/><line x1="0" y1="'+i*u+'" x2="'+S+'" y2="'+i*u+'" stroke="#9fb3c8"/>';
+  return s + '<rect width="'+S+'" height="'+S+'" fill="none" stroke="'+COL.ink+'" stroke-width="2.5"/></svg>';
+}
+function shade(hex, f){
+  var n=parseInt(hex.slice(1),16), rgb=[n>>16, n>>8&255, n&255];
+  return '#'+rgb.map(function(v){ v = Math.round(f>0 ? v+(255-v)*f : v*(1+f)); return ('0'+v.toString(16)).slice(-2); }).join('');
+}
+function isoBox(w,d,h,u,color){
+  var c=Math.cos(Math.PI/6);
+  function P(x,y,z){ return [(x-y)*c*u, (x+y)*0.5*u - z*u]; }
+  var xs=[], ys=[];
+  [0,w].forEach(function(x){ [0,d].forEach(function(y){ [0,h].forEach(function(z){ var q=P(x,y,z); xs.push(q[0]); ys.push(q[1]); }); }); });
+  var minX=Math.min.apply(null,xs), minY=Math.min.apply(null,ys), pad=2;
+  var W=Math.max.apply(null,xs)-minX+pad*2, H=Math.max.apply(null,ys)-minY+pad*2;
+  function T(a){ var q=P(a[0],a[1],a[2]); return [(q[0]-minX+pad).toFixed(1), (q[1]-minY+pad).toFixed(1)]; }
+  function poly(pts, fill){ return '<polygon points="'+pts.map(function(a){return T(a).join(',');}).join(' ')+'" fill="'+fill+'" stroke="'+COL.ink+'" stroke-width="1.2" stroke-linejoin="round"/>'; }
+  function L(a,b){ var p=T(a), q=T(b); return '<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(27,42,58,.35)" stroke-width=".7"/>'; }
+  var s='<svg viewBox="0 0 '+W.toFixed(1)+' '+H.toFixed(1)+'" width="'+Math.round(W)+'" height="'+Math.round(H)+'" aria-hidden="true">';
+  s += poly([[0,0,h],[w,0,h],[w,d,h],[0,d,h]], shade(color,.45));
+  s += poly([[w,0,0],[w,d,0],[w,d,h],[w,0,h]], shade(color,-.25));
+  s += poly([[0,d,0],[w,d,0],[w,d,h],[0,d,h]], color);
+  var i;
+  for (i=1;i<w;i++){ s+=L([i,0,h],[i,d,h]); s+=L([i,d,0],[i,d,h]); }
+  for (i=1;i<d;i++){ s+=L([0,i,h],[w,i,h]); s+=L([w,i,0],[w,i,h]); }
+  for (i=1;i<h;i++){ s+=L([w,0,i],[w,d,i]); s+=L([0,d,i],[w,d,i]); }
+  return s+'</svg>';
+}
+var BLOCKS = { 0:[10,10,10], '-1':[10,10,1], '-2':[10,1,1], '-3':[1,1,1] };
+function blockSVG(p,u){ var b=BLOCKS[p]; return isoBox(b[0],b[1],b[2],u,placeOf(p).color); }
+
+function pvChart(ps, cell, cls){
+  var hasPoint = ps.indexOf(0)>=0 && ps.indexOf(-1)>=0, tpl=[], head='', row='';
+  ps.forEach(function(p){
+    if (p===-1 && hasPoint){ tpl.push('16px'); head+='<div class="h" style="background:#0e4a7a"></div>'; row+='<div class="d pt">.</div>'; }
+    var pl=placeOf(p), c=cell(p);
+    tpl.push('1fr');
+    head += '<div class="h" style="background:'+pl.color+'">'+pl.label+'</div>';
+    row += '<div class="d'+(c.cls?' '+c.cls:'')+'" data-p="'+p+'">'+c.html+'</div>';
+  });
+  return '<div class="pv '+(cls||'')+'" style="grid-template-columns:'+tpl.join(' ')+'">'+head+row+'</div>';
+}
+
+/* ---------- question bank (original practice items) ---------- */
+var B = '<span class="blank">?</span>';
+var Q = {
+  s1a:{inline:1, prompt:'How many <b>tenths</b> make 1 whole?', options:[
+    {t:'10', ok:1},
+    {t:'100', why:'Count the strips in the middle square. Each strip is 1 tenth.'},
+    {t:'1,000', why:'Count the strips in the middle square. Each strip is 1 tenth.'}],
+    explain:'10 tenths = 1 whole.'},
+  s1b:{inline:1, prompt:'How many <b>hundredths</b> fit in 1 tenth?', options:[
+    {t:'1', why:'Look at one column of the last square. How many small squares are in it?'},
+    {t:'10', ok:1},
+    {t:'100', why:'100 hundredths fill the whole square. How many fit in just one column?'}],
+    explain:'One column (1 tenth) holds 10 small squares, so 1 tenth = 10 hundredths.'},
+  s3a:{prompt:'Is Sam right?', options:[
+    {t:'Yes. Every digit is a 1, so they are all worth the same.', why:'Look at the values you found: 1, 0.1, 0.01 and 0.001. Are they equal?'},
+    {t:'No. The value of each 1 depends on its place.', ok:1}],
+    explain:'Each 1 is worth '+TENTH+' of the 1 on its left: 1, 0.1, 0.01, 0.001.'},
+  s4a:{prompt:'A 7 moves from the <b>tenths</b> place to the <b>hundredths</b> place. What happens to its value?', options:[
+    {t:'It becomes 10 times as much.', why:'Moving to the <b>right</b> makes a digit worth less. Try it above.'},
+    {t:'It becomes '+TENTH+' as much.', ok:1},
+    {t:'It stays the same.', why:'The digit is the same, but its place changed. Try it above.'}],
+    explain:'0.7 → 0.07. One place right means divide by 10.'},
+  s4b:{inline:1, prompt:'A 3 moves from the <b>hundredths</b> place to the <b>tenths</b> place. 0.03 becomes…', options:[
+    {t:'0.3', ok:1},
+    {t:'0.003', why:'That is one place to the <b>right</b>. This 3 moved left.'},
+    {t:'3', why:'That is two places left. This 3 moved only one place.'}],
+    explain:'One place left means 10 times as much: 0.03 × 10 = 0.3.'},
+  s5a:{inline:1, prompt:'0.6 is '+B+' 0.06.', options:[
+    {t:'10 times', ok:1},
+    {t:TENTH+' of', why:'Look at the grids. 0.6 has much more shaded, so it is the bigger amount.'}],
+    explain:'6 tenths is 10 times as much as 6 hundredths.'},
+  s5b:{inline:1, prompt:'0.06 is '+B+' 0.6.', options:[
+    {t:'10 times', why:'0.06 is the smaller amount. Look at the grids.'},
+    {t:TENTH+' of', ok:1}],
+    explain:'6 hundredths is '+TENTH+' of 6 tenths.'},
+  s6a:{letters:1, prompt:'Tap the true statement.', options:[
+    {t:'0.004 is 10 times 0.04', why:'0.004 is smaller than 0.04. It is '+TENTH+' of 0.04.'},
+    {t:'0.04 is '+TENTH+' of 0.4', ok:1},
+    {t:'4 is 10 times 0.04', why:'From hundredths to ones is two places, so 4 is 100 times 0.04.'},
+    {t:'0.4 is '+TENTH+' of 0.04', why:'0.4 is bigger than 0.04. It is 10 times 0.04.'}],
+    explain:'0.4 ÷ 10 = 0.04, so 0.04 is '+TENTH+' of 0.4.'},
+  s6b:{letters:1, prompt:'Tap the true statement.', options:[
+    {t:'0.07 is '+TENTH+' of 0.007', why:'0.07 is bigger than 0.007. It is 10 times 0.007.'},
+    {t:'7 is 10 times 0.7', ok:1},
+    {t:'0.7 is 10 times 0.007', why:'From thousandths to tenths is two places, so 0.7 is 100 times 0.007.'},
+    {t:'70 is '+TENTH+' of 7', why:'70 is bigger than 7. It is 10 times 7.'}],
+    explain:'0.7 × 10 = 7, so 7 is 10 times 0.7.'},
+  s7a:{inline:1, prompt:'Mariam has '+B+' the money Omar has.', options:[
+    {t:'10 times', ok:1},
+    {t:TENTH+' of', why:'Mariam has AED 5.00 and Omar has AED 0.50. Who has more?'}],
+    explain:'AED 5.00 is 10 times AED 0.50.'},
+  s7b:{inline:1, prompt:'Lina has '+B+' the money Omar has.', options:[
+    {t:'10 times', why:'Lina has AED 0.05. That is less than Omar’s AED 0.50.'},
+    {t:TENTH+' of', ok:1}],
+    explain:'AED 0.05 is '+TENTH+' of AED 0.50.'},
+  s7c:{type:'num', prompt:'AED {input} is 10 times AED 0.70.', answer:7, show:'7.00',
+    hint:'10 times as much: move each digit one place to the <b>left</b>.', explain:'0.70 × 10 = 7.00'},
+  s7d:{type:'num', prompt:'AED {input} is '+TENTH+' of AED 7.00.', answer:0.7, show:'0.70',
+    hint:TENTH+' as much: move each digit one place to the <b>right</b>.', explain:'7.00 ÷ 10 = 0.70'},
+  s8a:{inline:1, prompt:'What is the value of the <span class="hl blue">blue 7</span>?', options:[
+    {t:'7', why:'Count the places after the decimal point: tenths, hundredths, thousandths.'},
+    {t:'0.7', why:'The blue 7 is the <b>second</b> digit after the point.'},
+    {t:'0.07', ok:1},
+    {t:'0.007', why:'The blue 7 is the <b>second</b> digit after the point.'}],
+    explain:'The blue 7 is in the hundredths place: 0.07.'},
+  s8b:{inline:1, prompt:'What is the value of the <span class="hl orange">orange 7</span>?', options:[
+    {t:'7', why:'The orange 7 is the <b>third</b> digit after the point.'},
+    {t:'0.7', why:'The orange 7 is the <b>third</b> digit after the point.'},
+    {t:'0.07', why:'The orange 7 is the <b>third</b> digit after the point.'},
+    {t:'0.007', ok:1}],
+    explain:'The orange 7 is in the thousandths place: 0.007.'},
+  s8c:{inline:1, prompt:'The <span class="hl blue">blue 7</span> is '+B+' the <span class="hl orange">orange 7</span>.', options:[
+    {t:'10 times', ok:1},
+    {t:TENTH+' of', why:'The blue 7 (0.07) is bigger than the orange 7 (0.007).'},
+    {t:'100 times', why:'They are next to each other: only one place apart.'}],
+    explain:'0.07 is 10 times 0.007.'},
+  s8d:{inline:1, prompt:'What is the value of the <span class="hl blue">blue 4</span>?', options:[
+    {t:'40', why:'The blue 4 is just <b>before</b> the decimal point: the ones place.'},
+    {t:'4', ok:1},
+    {t:'0.4', why:'The blue 4 is <b>before</b> the decimal point.'},
+    {t:'0.04', why:'The blue 4 is <b>before</b> the decimal point.'}],
+    explain:'The blue 4 is in the ones place: 4.'},
+  s8e:{inline:1, prompt:'What is the value of the <span class="hl orange">orange 4</span>?', options:[
+    {t:'4', why:'The orange 4 is the <b>first</b> digit after the point.'},
+    {t:'0.4', ok:1},
+    {t:'0.04', why:'The orange 4 is the <b>first</b> digit after the point.'},
+    {t:'0.004', why:'The orange 4 is the <b>first</b> digit after the point.'}],
+    explain:'The orange 4 is in the tenths place: 0.4.'},
+  s8f:{inline:1, prompt:'The <span class="hl orange">orange 4</span> is '+B+' the <span class="hl blue">blue 4</span>.', options:[
+    {t:'10 times', why:'The orange 4 (0.4) is smaller than the blue 4 (4).'},
+    {t:TENTH+' of', ok:1},
+    {t:'100 times', why:'They are only one place apart, and the orange 4 is smaller.'}],
+    explain:'0.4 is '+TENTH+' of 4.'},
+  s9a:{inline:1, prompt:'Is Rami right?', options:[
+    {t:'Yes', why:'Find the value of each 4 first. The blue 4 is 40 and the orange 4 is 0.4. Is 40 ten times 0.4?'},
+    {t:'No', ok:1}],
+    explain:'10 times 0.4 is only 4, but the blue 4 is worth 40.'},
+  s9b:{inline:1, prompt:'The 4 in the tens place is '+B+' the 4 in the tenths place.', options:[
+    {t:'10 times', why:'10 × 0.4 = 4, not 40.'},
+    {t:'100 times', ok:1},
+    {t:'1,000 times', why:'1,000 × 0.4 = 400. That is too big.'}],
+    explain:'40 is 100 times 0.4.'},
+  s10:{type:'multi', prompt:'In which numbers is the digit 6 worth <b>10 times</b> the 6 in <b>3.462</b>?', options:[
+    {t:'2.615', ok:1}, {t:'6.243'}, {t:'1.356'}, {t:'9.68', ok:1}, {t:'0.564'}],
+    hint:'Step 1: the 6 in 3.462 is in the hundredths place, so it is worth 0.06. Step 2: 10 times 0.06 is 0.6. Step 3: find every number with a 6 in the <b>tenths</b> place.',
+    explain:'In 2.615 and 9.68 the 6 is in the tenths place (0.6), and 0.6 is 10 times 0.06.'},
+  s11a:{inline:1, prompt:'The 2 in the <b>ones</b> place is '+B+' the 2 in the <b>tenths</b> place.', options:[
+    {t:'10 times', ok:1},
+    {t:TENTH+' of', why:'The ones 2 (worth 2) is bigger than the tenths 2 (worth 0.2).'},
+    {t:'100 times', why:'Ones and tenths are next to each other: one place apart.'}],
+    explain:'2 is 10 times 0.2.'},
+  s11b:{inline:1, prompt:'The 2 in the <b>tens</b> place is '+B+' the 2 in the <b>tenths</b> place.', options:[
+    {t:'10 times', why:'10 × 0.2 = 2. But the tens 2 is worth 20.'},
+    {t:'100 times', ok:1},
+    {t:'1,000 times', why:'1,000 × 0.2 = 200. That is too big.'}],
+    explain:'20 is 100 times 0.2. Tens to tenths is two places: 10 × 10 = 100.'}
+};
+
+/* ---------- renderers ---------- */
+function renderChoice(el, id, q){
+  el.innerHTML = '<p class="prompt">'+q.prompt+'</p><div class="opts'+(q.inline?' inline':'')+'"></div><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el);
+  sizeOpts(box, q.options.length);
+  var btns = q.options.map(function(o,i){
+    var b=document.createElement('button'); b.type='button'; b.className='opt';
+    b.innerHTML = (q.letters?'<span class="letter">'+'ABCDE'.charAt(i)+'</span>':'')+'<span>'+o.t+'</span>';
+    b.addEventListener('click', function(){
+      if (solved(id)) return;
+      record(id, !!o.ok);
+      if (o.ok) done();
+      else { b.classList.add('wrong'); b.disabled=true; fb(f,false,'Not quite. '+(o.why||'Try again.')); }
+    });
+    box.appendChild(b); return b;
+  });
+  function done(){
+    btns.forEach(function(b,i){ b.disabled=true; if (q.options[i].ok) b.classList.add('correct'); });
+    var bl=$('.blank',el), c=q.options.filter(function(o){return o.ok;})[0];
+    if (bl){ bl.innerHTML=c.t; bl.classList.add('filled'); }
+    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+(q.explain||''));
+    updateReveals();
+  }
+  if (solved(id)) done();
+}
+function renderMulti(el, id, q){
+  el.innerHTML = '<p class="prompt">'+q.prompt+'</p><p class="muted small">Tap every number that fits, then press Check.</p><div class="opts inline"></div><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el), chk=$('.check',el), sel={};
+  sizeOpts(box, q.options.length);
+  var btns = q.options.map(function(o,i){
+    var b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=o.t;
+    b.setAttribute('aria-pressed','false');
+    b.addEventListener('click', function(){ if (solved(id)) return; sel[i]=!sel[i]; b.classList.toggle('sel',sel[i]); b.setAttribute('aria-pressed',String(!!sel[i])); });
+    box.appendChild(b); return b;
+  });
+  chk.addEventListener('click', function(){
+    if (solved(id)) return;
+    var any=q.options.some(function(o,i){return sel[i];});
+    if (!any){ fb(f,false,'Pick at least one number first.'); return; }
+    var ok=q.options.every(function(o,i){ return !!o.ok===!!sel[i]; });
+    record(id, ok);
+    if (ok) done(); else fb(f,false,'Not quite. '+q.hint);
+  });
+  function done(){
+    btns.forEach(function(b,i){ b.disabled=true; b.classList.remove('sel'); if (q.options[i].ok) b.classList.add('correct'); });
+    chk.hidden=true;
+    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain);
+    updateReveals();
+  }
+  if (solved(id)) done();
+}
+function renderNum(el, id, q){
+  el.innerHTML = '<p class="prompt">'+q.prompt.replace('{input}','<input class="num" type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer">')+'</p><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+  var inp=$('input',el), f=$('.fb',el), chk=$('.check',el);
+  function check(){
+    if (solved(id)) return;
+    var raw=inp.value.trim();
+    if (!raw){ fb(f,false,'Type a number first.'); return; }
+    var v=parseFloat(raw.replace(/[^0-9.]/g,''));
+    if (isNaN(v)){ fb(f,false,'Type a number, like 3.5'); return; }
+    var ok=Math.abs(v-q.answer)<1e-9;
+    record(id, ok);
+    if (ok) done(); else fb(f,false,'Not quite. '+q.hint);
+  }
+  chk.addEventListener('click', check);
+  inp.addEventListener('keydown', function(e){ if (e.key==='Enter') check(); });
+  function done(){
+    inp.value=q.show; inp.disabled=true; inp.classList.add('ok'); chk.hidden=true;
+    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain);
+    updateReveals();
+  }
+  if (solved(id)) done();
+}
+
+/* ---------- screen 1: models ---------- */
+function setupModels(){
+  $$('.model').forEach(function(b){
+    b.insertAdjacentHTML('afterbegin', squareSVG(b.getAttribute('data-svg')));
+    b.addEventListener('click', function(){ b.classList.add('open'); $('.mlabel',b).hidden=false; $('.tapme',b).hidden=true; });
+  });
+}
+
+/* ---------- screen 2: grid explorer ---------- */
+function setupGrid(){
+  var g=$('#grid100'), cells=[], tool='tenth', r, c;
+  for (r=0;r<10;r++) for (c=0;c<10;c++){
+    var b=document.createElement('button'); b.type='button'; b.setAttribute('data-c',c);
+    b.setAttribute('aria-label','Row '+(r+1)+', column '+(c+1));
+    g.appendChild(b); cells.push(b);
+  }
+  $$('[data-tool]').forEach(function(t){ t.addEventListener('click', function(){
+    tool=t.getAttribute('data-tool'); $$('[data-tool]').forEach(function(x){ x.classList.toggle('on', x===t); });
+  }); });
+  g.addEventListener('click', function(e){
+    var b=e.target.closest('button'); if (!b) return;
+    if (tool==='tenth'){
+      var col=cells.filter(function(x){ return x.getAttribute('data-c')===b.getAttribute('data-c'); });
+      var all=col.every(function(x){ return x.classList.contains('on'); });
+      col.forEach(function(x){ x.classList.toggle('on', !all); });
+    } else b.classList.toggle('on');
+    update();
+  });
+  function count(){ return cells.filter(function(x){ return x.classList.contains('on'); }).length; }
+  function clear(){ cells.forEach(function(x){ x.classList.remove('on'); }); update(); }
+  $('#gridClear').addEventListener('click', clear);
+  function update(){
+    var n=count(), out;
+    if (n===100) out='100 hundredths = <b>1 whole</b>';
+    else if (n===0) out='Nothing shaded yet: <b>0</b>';
+    else out='<b>'+n+'</b> hundredth'+(n===1?'':'s')+' = <b>'+(n/100)+'</b>'+(n%10===0?' = '+(n/10)+' tenth'+(n===10?'':'s'):'');
+    $('#gridRead').innerHTML=out;
+  }
+  var TASKS=[
+    {id:'g1', target:30, label:'0.3', hint:'0.3 means 3 tenths. Choose the <b>Tenth</b> tool and shade 3 columns.', explain:'3 tenths = 30 hundredths = 0.3'},
+    {id:'g2', target:3,  label:'0.03', hint:'0.03 means 3 hundredths: only 3 small squares. Choose the <b>Hundredth</b> tool.', explain:'3 hundredths = 0.03'}
+  ];
+  var box=$('#gridTask');
+  TASKS.forEach(function(t){ reg(t.id, box); });
+  function showTask(){
+    var t=TASKS.filter(function(x){ return !solved(x.id); })[0];
+    if (!t){ box.innerHTML='<p class="prompt">Both tasks done ✓</p><p class="muted">Look at the two grids below.</p>'; updateReveals(); return; }
+    var k=TASKS.indexOf(t)+1;
+    box.innerHTML='<p class="prompt">Task '+k+' of 2: Shade <span class="bigval">'+t.label+'</span></p><button type="button" class="btn small check">Check my grid</button><div class="fb" aria-live="polite"></div>';
+    var f=$('.fb',box);
+    $('.check',box).addEventListener('click', function(){
+      var n=count(), ok=n===t.target;
+      record(t.id, ok);
+      if (!ok){ fb(f,false,'You shaded '+(n/100)+'. '+t.hint); return; }
+      fb(f,true,(item(t.id).first?'Correct! ':'Yes, that’s it. ')+t.explain+(k<2?' <button type="button" class="btn small" id="gridNext" style="margin-left:8px">Next task</button>':''));
+      $('.check',box).hidden=true;
+      updateReveals();
+      var nx=$('#gridNext'); if (nx) nx.addEventListener('click', function(){ clear(); showTask(); });
+      if (k===2) { box.insertAdjacentHTML('beforeend','<p class="muted small" style="margin-top:8px">Both tasks done ✓ Look at the two grids below.</p>'); }
+    });
+  }
+  update(); showTask();
+}
+
+/* ---------- screen 3: digit detective ---------- */
+function setupDetective(){
+  var ps=[0,-1,-2,-3], seen={};
+  $('#ddChart').innerHTML = pvChart(ps, function(p){
+    return {html:'<button type="button" class="digit" data-p="'+p+'" style="color:'+placeOf(p).color+'" aria-label="The 1 in the '+placeOf(p).name+' place"><span>1</span></button>'};
+  });
+  $$('#ddChart .digit').forEach(function(b){
+    b.addEventListener('click', function(){
+      var p=+b.getAttribute('data-p'), pl=placeOf(p);
+      seen[p]=1; b.classList.add('seen');
+      var value = p===0 ? '<b>1</b>' : frac(1,denom(p))+' or <b>'+valStr(1,p)+'</b>';
+      var size = p===0 ? 'a big cube' : p===-1 ? 'a flat: '+TENTH+' of the cube' : p===-2 ? 'a rod: '+TENTH+' of the flat' : 'a tiny cube: '+TENTH+' of the rod';
+      $('#ddInfo').innerHTML='<div class="blk">'+blockSVG(p, 7)+'<div>This 1 is in the <b style="color:'+pl.color+'">'+pl.name+'</b> place.<br>It is worth '+value+'.<br><span class="muted small">Model: '+size+'.</span></div></div>';
+      if (Object.keys(seen).length===4) setFlag('flag:dd');
+    });
+  });
+  var row='';
+  ps.forEach(function(p,i){
+    if (i) row+='<span class="arrow">÷10 →</span>';
+    row+='<figure>'+blockSVG(p,5)+'<figcaption><b>'+valStr(1,p)+'</b></figcaption></figure>';
+  });
+  $('#ddRow').innerHTML=row;
+}
+
+/* ---------- screen 4: slider ---------- */
+function setupSlider(){
+  var d=7, p=-1, ps=[2,1,0,-1,-2,-3];
+  function draw(){
+    $('#slChart').innerHTML = pvChart(ps, function(q){
+      if (q===p) return {html:String(d), cls:'hot'};
+      if ((p<0 && q<=0 && q>p) || (p>0 && q>=0 && q<p)) return {html:'0', cls:'ph'};
+      return {html:''};
+    });
+    $('#slVal').innerHTML = 'The '+d+' is in the <b style="color:'+placeOf(p).color+'">'+placeOf(p).name+'</b> place. Value: <span class="bigval">'+valStr(d,p)+'</span>'+(p<0?' = '+frac(d,denom(p)):'');
+    $('#slLeft').disabled = p>=2; $('#slRight').disabled = p<=-3;
+  }
+  function move(step){
+    var old=p; p+=step; draw();
+    $('#slMsg').innerHTML = step>0
+      ? valStr(d,old)+' → <b>'+valStr(d,p)+'</b>. One place <b>left</b>, so it is worth <b>10 times</b> as much.'
+      : valStr(d,old)+' → <b>'+valStr(d,p)+'</b>. One place <b>right</b>, so it is worth <b>'+TENTH+'</b> as much.';
+  }
+  $('#slLeft').addEventListener('click', function(){ move(1); });
+  $('#slRight').addEventListener('click', function(){ move(-1); });
+  $('#slDigit').addEventListener('click', function(){ d = d%9+1; draw(); $('#slMsg').innerHTML='New digit: <b>'+d+'</b>. Move it left and right.'; });
+  draw();
+}
+
+/* ---------- screen 12: builders ---------- */
+function setupBuilder(el, id, cfg){
+  reg(id, el);
+  el.innerHTML = '<p class="prompt">'+cfg.prompt+'</p><div class="tray" aria-label="Digit tiles"></div>'+
+    '<div class="slots"><div class="slot-wrap"><button type="button" class="slot" aria-label="ones place"></button>ones</div><div class="point">.</div>'+
+    '<div class="slot-wrap"><button type="button" class="slot" aria-label="tenths place"></button>tenths</div>'+
+    '<div class="slot-wrap"><button type="button" class="slot" aria-label="hundredths place"></button>hundredths</div></div>'+
+    '<p class="muted small center" style="margin-top:8px">Tap a tile, then tap a box. Tap a box again to take its tile back.</p>'+
+    '<div class="center"><button type="button" class="btn small check">Check</button></div><div class="fb" aria-live="polite"></div>';
+  var slots=[null,null,null], sel=null, tray=$('.tray',el), slotEls=$$('.slot',el), f=$('.fb',el), chk=$('.check',el);
+  function draw(){
+    tray.innerHTML='';
+    cfg.digits.forEach(function(dg,i){
+      if (slots.indexOf(i)>=0) return;
+      var b=document.createElement('button'); b.type='button'; b.className='tile'+(sel===i?' sel':''); b.textContent=dg;
+      b.addEventListener('click', function(){ if (solved(id)) return; sel = sel===i ? null : i; draw(); });
+      tray.appendChild(b);
+    });
+    slotEls.forEach(function(s,k){ s.textContent = slots[k]===null ? '' : cfg.digits[slots[k]]; s.classList.toggle('filled', slots[k]!==null); });
+  }
+  slotEls.forEach(function(s,k){ s.addEventListener('click', function(){
+    if (solved(id)) return;
+    if (sel!==null){ slots[k]=sel; sel=null; } else if (slots[k]!==null) slots[k]=null;
+    draw();
+  }); });
+  chk.addEventListener('click', function(){
+    if (solved(id)) return;
+    if (slots.indexOf(null)>=0){ fb(f,false,'Use all three digits: fill every box.'); return; }
+    var num=slots.map(function(i){ return cfg.digits[i]; }), ok=cfg.test(num);
+    record(id, ok); if (ok){ item(id).ans=num; save(); done(); } else fb(f,false,'Not quite. '+cfg.hint);
+  });
+  function done(){
+    var num=item(id).ans || [];
+    if (num.length===3) slots=num.map(function(dg){ return cfg.digits.indexOf(dg); });
+    sel=null; draw(); chk.hidden=true; tray.hidden=true; $('p.muted',el).hidden=true;
+    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+(num.length===3?'<b>'+num[0]+'.'+num[1]+num[2]+'</b> works. ':'')+cfg.explain);
+  }
+  draw(); if (solved(id)) done();
+}
+
+/* ---------- reflect ---------- */
+function setupReflect(){
+  var ta=$('#reflect'); ta.value=state.reflect||'';
+  ta.addEventListener('input', function(){ state.reflect=ta.value; save(); });
+  var opts=['Take slow, deep breaths','Count slowly to 10','Talk to someone I trust','Take a short break','Draw or write about it','Get a drink of water'];
+  var box=$('#chips');
+  opts.forEach(function(o){
+    var b=document.createElement('button'); b.type='button'; b.className='chip'+(state.mind.indexOf(o)>=0?' sel':''); b.textContent=o;
+    b.addEventListener('click', function(){
+      var i=state.mind.indexOf(o); if (i>=0) state.mind.splice(i,1); else state.mind.push(o);
+      b.classList.toggle('sel', i<0); save();
+    });
+    box.appendChild(b);
+  });
+}
+
+/* ---------- results ---------- */
+function renderResults(){
+  var n=GRADED.length, first=0, notTried=0, miss={};
+  GRADED.forEach(function(id){
+    var it=state.items[id];
+    if (it && it.first===true) first++;
+    else { if (!it || !it.tries) notTried++; miss[TOPIC[id]]=(miss[TOPIC[id]]||0)+1; }
+  });
+  var pct=Math.round(first/n*100), stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  var nm=(state.name||'').trim();
+  var html='<div class="stars" aria-label="'+stars+' of 3 stars">'+'★★★'.slice(0,stars)+'☆☆☆'.slice(0,3-stars)+'</div>'+
+    '<h2>'+(nm?'Well done, '+esc(nm)+'!':'Well done!')+'</h2>'+
+    '<p class="score"><b>'+first+'</b> out of '+n+' right on the first try</p>'+
+    '<p class="muted small">Lesson 3-2 · Extend Place Value to Decimals · '+esc(new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}))+'</p>';
+  if (notTried) html+='<p>You have not answered <b>'+notTried+'</b> question'+(notTried===1?'':'s')+' yet. Tap <b>Back</b> to find them.</p>';
+  var topics=Object.keys(miss);
+  html += topics.length
+    ? '<div class="review"><b>Look at these again:</b><ul>'+topics.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>'
+    : '<p><b>Perfect! Nothing to review.</b></p>';
+  html+='<p class="muted small" style="margin-top:14px">Show this screen to your teacher.</p>';
+  $('#results').innerHTML=html;
+}
+
+/* ---------- navigation ---------- */
+var screens=$$('section.screen');
+function show(i){
+  i=Math.max(0,Math.min(screens.length-1,i));
+  screens.forEach(function(s,k){ s.classList.toggle('active', k===i); });
+  state.idx=i; save();
+  var s=screens[i];
+  if (s.getAttribute('data-show')==='results') renderResults();
+  $('#topTitle').textContent='Lesson 3-2 · '+s.getAttribute('data-title');
+  $('#topCount').textContent=(i+1)+' / '+screens.length;
+  $('#bar').style.width=(i/(screens.length-1)*100)+'%';
+  $('#back').disabled = i===0;
+  var nx=$('#next');
+  nx.hidden = i===screens.length-1;
+  nx.textContent = i===0 ? 'Start ▶' : i===screens.length-2 ? 'See my results ▶' : 'Next ▶';
+  window.scrollTo(0,0);
+}
+$('#back').addEventListener('click', function(){ show(state.idx-1); });
+$('#next').addEventListener('click', function(){ show(state.idx+1); });
+var restartArmed=false;
+$('#restart').addEventListener('click', function(){
+  if (!restartArmed){ restartArmed=true; this.textContent='Tap again to erase all answers'; return; }
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  location.reload();
+});
+
+/* ---------- boot ---------- */
+load();
+var nameInp=$('#name'); nameInp.value=state.name||'';
+nameInp.addEventListener('input', function(){ state.name=nameInp.value; save(); });
+$$('[data-gridsvg]').forEach(function(el){ el.innerHTML=gridSVG(+el.getAttribute('data-gridsvg')); });
+setupModels();
+setupGrid();
+setupDetective();
+setupSlider();
+$$('[data-q]').forEach(function(el){
+  var id=el.getAttribute('data-q'), q=Q[id];
+  reg(id, el);
+  if (q.type==='multi') renderMulti(el,id,q); else if (q.type==='num') renderNum(el,id,q); else renderChoice(el,id,q);
+});
+$('#raceChart').innerHTML = pvChart([1,0,-1], function(){ return {html:'2'}; });
+setupBuilder($('#build1'), 'b1', {digits:[3,6,8],
+  prompt:'<b>A.</b> Make a number where the <b>8</b> is worth <b>10 times</b> the 8 in 3.68.',
+  test:function(n){ return n[1]===8; },
+  hint:'In 3.68 the 8 is 8 hundredths (0.08). 10 times as much is 0.8. Which place is that?',
+  explain:'The 8 is in the tenths place (0.8), and 0.8 is 10 times 0.08.'});
+setupBuilder($('#build2'), 'b2', {digits:[3,6,8],
+  prompt:'<b>B.</b> Make a number where the <b>6</b> is worth <b>'+TENTH+'</b> of the 6 in 3.68.',
+  test:function(n){ return n[2]===6; },
+  hint:'In 3.68 the 6 is 6 tenths (0.6). '+TENTH+' of that is 0.06. Which place is that?',
+  explain:'The 6 is in the hundredths place (0.06), and 0.06 is '+TENTH+' of 0.6.'});
+setupReflect();
+updateReveals();
+show(state.idx||0);
+window.__lesson = {state:state, GRADED:GRADED, Q:Q};
+})();
+</script>
+</body>
+</html>
