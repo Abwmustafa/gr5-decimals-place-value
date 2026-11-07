@@ -4,60 +4,119 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Decimal Place Value</title>
-<meta name="description" content="Grade 5 interactive lesson 3-2: extend place value to decimals.">
+<meta name="description" content="Interactive workbook lesson: extend place value to decimals.">
 <style>
 :root{
-  --bg:#eef4fb; --card:#ffffff; --ink:#1b2a3a; --muted:#566676; --line:#d3deea;
+  --desk:#d6dfe9; --paper:#ffffff; --ink:#1b2a3a; --muted:#566676; --line:#d3deea;
   --brand:#1769aa; --brand-dark:#0e4a7a; --brand-soft:#dcebf8;
   --hunds:#34495e; --tens:#5d6d7e; --ones:#2e86de; --tenths:#119c7f; --hund:#e07b16; --thou:#8e44ad;
-  --ok:#1e7e34; --ok-soft:#e2f3e6; --bad:#b83227; --bad-soft:#fbe6e3; --note:#fff6d6;
+  --curious:#2f9e44; --learn:#7b3fb0; --together:#1769aa; --practice:#e07b16; --extend:#c2185b; --reflect:#119c7f;
+  --ok:#1e7e34; --ok-soft:#e2f3e6; --bad:#b83227; --bad-soft:#fbe6e3; --note:#fff6d6; --sun:#f2b705;
   color-scheme: light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5;-webkit-text-size-adjust:100%}
+body{overflow-x:clip}
+body{background:var(--desk);background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1px);background-size:18px 18px;color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5;-webkit-text-size-adjust:100%}
 button{font:inherit;-webkit-tap-highlight-color:transparent}
-header.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
-.top-inner{max-width:780px;margin:0 auto;padding:10px 16px 8px;display:flex;align-items:center;gap:12px}
-.top-title{font-weight:700;font-size:15px;color:var(--brand-dark);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-count{font-size:14px;color:var(--muted);white-space:nowrap}
-.bar{height:6px;background:var(--brand-soft)}
-.bar>i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
-main{max-width:780px;margin:0 auto;padding:16px 16px 112px}
-section.screen{display:none}
-section.screen.active{display:block;animation:fade .25s ease}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.card{background:var(--card);border-radius:18px;padding:18px;margin:0 0 16px;box-shadow:0 1px 3px rgba(20,40,70,.08)}
-.card.note,.note{background:var(--note)}
-.note{border-radius:14px;padding:14px;margin-top:12px}
-.kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--brand);border-radius:999px;padding:3px 12px;margin-bottom:8px}
-.kicker.green{background:var(--tenths)}.kicker.orange{background:var(--hund)}.kicker.purple{background:var(--thou)}
-h1{font-size:30px;line-height:1.2;margin:4px 0 10px}
-h2{font-size:24px;line-height:1.25;margin:2px 0 10px}
-h3{font-size:19px;margin:0 0 8px}
 p{margin:0 0 12px}
 ul{margin:6px 0 0;padding-left:22px}
-.muted{color:var(--muted)}
-.small{font-size:15px}
-.center{text-align:center}
-.btn{appearance:none;border:0;border-radius:14px;padding:12px 20px;font-weight:700;min-height:50px;cursor:pointer;background:var(--brand);color:#fff}
-.btn.ghost{background:var(--brand-soft);color:var(--brand-dark)}
-.btn.small{min-height:44px;padding:8px 16px;font-size:16px}
-.btn:disabled{opacity:.35;cursor:default}
-nav.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:5}
-.nav-inner{max-width:780px;margin:0 auto;display:flex;gap:12px;justify-content:space-between}
-.nav-inner .btn{min-width:120px}
+.muted{color:var(--muted)} .small{font-size:15px} .center{text-align:center}
+
+/* ---------- top bar + mascot ---------- */
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.top-inner{max-width:920px;margin:0 auto;padding:6px 16px;display:flex;align-items:center;gap:12px;min-height:58px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--brand-dark);font-size:16px;white-space:nowrap}
+.brand svg{width:26px;height:26px}
+.dots{flex:1;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.dots button{appearance:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:0}
+.dots button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.dots button:hover{border-color:var(--brand)}
+.score{font-weight:800;color:#8a6500;background:#fff3c4;border-radius:999px;padding:4px 12px;white-space:nowrap;font-size:16px}
+.score.pop{animation:pop .45s ease}
+@keyframes pop{50%{transform:scale(1.25)}}
+.dot-mascot{width:48px;height:48px;flex:none;cursor:pointer}
+.dot-mascot svg{width:100%;height:100%;overflow:visible}
+.dot-mascot .eyes{transform-box:fill-box;transform-origin:center}
+.dot-mascot.blink .eyes{transform:scaleY(.12)}
+.dot-mascot.cheer{animation:cheer .7s ease}
+.dot-mascot.hmm{animation:hmm .6s ease}
+@keyframes cheer{25%{transform:translateY(-10px) rotate(-8deg)}50%{transform:translateY(0)}75%{transform:translateY(-6px) rotate(8deg)}}
+@keyframes hmm{25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.bubble{position:absolute;right:14px;top:62px;max-width:min(320px,calc(100vw - 28px));background:#fff;border:2px solid var(--brand);border-radius:16px;padding:8px 14px;font-size:16px;font-weight:600;color:var(--brand-dark);box-shadow:0 6px 18px rgba(20,40,70,.18);opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.bubble.on{opacity:1;transform:none}
+.bubble::before{content:"";position:absolute;top:-9px;right:22px;width:14px;height:14px;background:#fff;border-left:2px solid var(--brand);border-top:2px solid var(--brand);transform:rotate(45deg)}
+
+/* ---------- book pages ---------- */
+main{max-width:920px;margin:0 auto;padding:96px 12px 110px}
+.book{perspective:2200px}
+.page{display:none;position:relative;background:var(--paper);border-radius:6px 16px 16px 6px;box-shadow:inset 16px 0 18px -16px rgba(0,0,0,.22),0 1px 0 #e9eef3,4px 5px 0 -1px #f4f6f8,4px 5px 0 0 #cfd8e2,8px 10px 0 -1px #f4f6f8,8px 10px 0 0 #cfd8e2,0 18px 36px rgba(20,40,70,.22);overflow:visible}
+.page.active{display:block}
+.page.in-next{transform-origin:left center;animation:inNext .55s cubic-bezier(.2,.7,.2,1)}
+.page.in-prev{transform-origin:right center;animation:inPrev .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes inNext{from{transform:rotateY(-38deg) translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes inPrev{from{transform:rotateY(30deg) translateX(-30px);opacity:0}to{transform:none;opacity:1}}
+/* pop-up book: things fold up off the page when it opens */
+.popup{transform-origin:50% 100%}
+.page.in-next .popup,.page.in-prev .popup{animation:foldUp .8s cubic-bezier(.2,1.3,.4,1) backwards;animation-delay:calc(.3s + var(--d,0s))}
+@keyframes foldUp{from{transform:perspective(800px) rotateX(82deg);opacity:0}to{transform:perspective(800px) rotateX(0deg);opacity:1}}
+/* floating 3D cube that sticks out of the page */
+.hero3d{position:absolute;right:-120px;top:-92px;width:380px;height:380px;z-index:4;pointer-events:none}
+.hero-bob{width:100%;height:100%;animation:heroBob 4s ease-in-out infinite}
+.hero3d svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 22px 16px rgba(0,0,0,.3))}
+@keyframes heroBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-16px) rotate(2deg)}}
+.page.in-next .hero3d,.page.in-prev .hero3d{animation:heroIn 1.1s cubic-bezier(.2,1.4,.4,1) backwards .25s}
+@keyframes heroIn{from{transform:translateY(140px) scale(.15) rotate(-30deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.page.in-next,.page.in-prev,.dot-mascot.cheer,.dot-mascot.hmm,.hero-bob,.page .popup,.page .hero3d,#stage .bob,#stage .shadow,.stage-wrap.popup .blk{animation:none !important}}
+.pg{padding:22px 34px 18px}
+.runhead{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8aa0b6;border-bottom:2px solid #edf2f7;padding:12px 34px 8px}
+.pagefoot{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#8aa0b6;font-weight:700;padding:10px 34px 16px;border-top:2px solid #edf2f7;margin-top:10px}
+.pagefoot .pno{display:inline-grid;place-items:center;min-width:32px;height:32px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark)}
+
+/* banner */
+.banner{position:relative;background:linear-gradient(120deg,#0e4a7a 0%,#1769aa 55%,#119c7f 100%);color:#fff;padding:30px 34px 34px;min-height:200px;overflow:hidden;border-radius:6px 16px 0 0}
+.banner::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+.banner-text{position:relative;z-index:1;max-width:calc(100% - 250px)}
+.lesson-tag{display:inline-block;background:var(--sun);color:#3d2c00;font-weight:800;border-radius:999px;padding:3px 14px;font-size:15px;letter-spacing:.04em}
+.banner h1{font-size:40px;line-height:1.08;margin:10px 0 8px;text-shadow:0 2px 0 rgba(0,0,0,.15)}
+.banner .unit{font-weight:600;opacity:.9}
+
+/* section headings */
+.sec{display:flex;align-items:center;gap:12px;margin:26px 0 10px;font-size:27px;line-height:1.15;font-weight:800;color:var(--c)}
+.sec:first-child{margin-top:4px}
+.sec .ico{flex:none;width:46px;height:46px;border-radius:13px;background:var(--c);display:grid;place-items:center;transform:rotate(-6deg);box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.sec .ico svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.sec::after{content:"";flex:1;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--c),transparent)}
+.lead{font-size:22px;font-weight:800;line-height:1.3;margin:0 0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.box{border:2.5px solid #b9cde2;border-radius:18px;padding:14px 16px;margin:14px 0;background:#fff}
+.sidebox{border-radius:16px;padding:12px 16px;margin:14px 0;background:var(--note);border-left:8px solid var(--sun)}
+.sidebox.pattern{background:#f3eafa;border-left-color:var(--learn)}
+.sidebox .tab{display:inline-block;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:var(--learn);border-radius:6px;padding:1px 8px;margin-bottom:6px}
+.targets{background:var(--brand-soft);border-radius:16px;padding:12px 16px}
+.namefield{display:block;font-weight:800}
+.namefield input{display:block;width:100%;margin-top:6px;font:inherit;padding:10px 12px;border:2.5px dashed #9fb7cf;border-radius:12px;background:#fbfdff}
+.lined{display:block;font-weight:800;color:var(--brand-dark)}
+.lined textarea,textarea.lined-ta{display:block;width:100%;margin-top:4px;font:inherit;font-size:18px;line-height:32px;min-height:98px;padding:0 10px;border:2px solid #c9d8e8;border-radius:12px;resize:vertical;background:#fff repeating-linear-gradient(transparent 0 31px,#d7e5f3 31px 32px);background-attachment:local}
+
+/* exercises */
+.ex{display:flex;gap:12px;padding:14px 0;border-top:2px dotted #d8e3ee}
+.ex:first-of-type{border-top:0}
+.exn{flex:none;width:36px;height:36px;border-radius:50%;background:var(--c,var(--practice));color:#fff;font-weight:800;display:grid;place-items:center;font-size:18px;margin-top:2px}
+.exb{flex:1;min-width:0}
+.extitle{font-weight:800;color:var(--c,var(--practice))}
+
 /* questions */
-.q{padding:14px 0;border-top:1px dashed var(--line)}
-.q:first-child{border-top:0;padding-top:4px}
+.q{padding:10px 0}
+.q + .q{border-top:1px dashed var(--line)}
 .prompt{font-weight:600;margin-bottom:10px}
 .opts{display:grid;gap:10px}
 .opts.inline{grid-template-columns:repeat(var(--n,3),minmax(0,1fr))}
-@media (max-width:520px){.opts.inline.n4{grid-template-columns:repeat(2,1fr)}.opts.inline.n5{grid-template-columns:repeat(3,1fr)}}
-.opt{appearance:none;text-align:left;color:var(--ink);background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.opt{appearance:none;text-align:left;color:var(--ink);background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .12s,box-shadow .12s,border-color .12s}
 .opts.inline .opt{justify-content:center;text-align:center;font-weight:700}
-.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt:hover:not(:disabled){border-color:var(--brand);transform:translateY(-2px);box-shadow:0 4px 0 rgba(23,105,170,.18)}
+.opt:active:not(:disabled){transform:translateY(1px);box-shadow:none}
 .opt.sel{border-color:var(--brand);background:var(--brand-soft)}
 .opt.correct{border-color:var(--ok);background:var(--ok-soft)}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft);opacity:.8}
@@ -73,339 +132,438 @@ nav.bottom{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-
 .frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 2px}
 input.num{font:inherit;font-weight:700;width:110px;padding:6px 10px;border:2px solid var(--brand);border-radius:10px;text-align:center}
 input.num.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.btn{appearance:none;border:0;border-radius:14px;padding:12px 20px;font-weight:700;min-height:50px;cursor:pointer;background:var(--brand);color:#fff;transition:transform .12s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.ghost{background:var(--brand-soft);color:var(--brand-dark)}
+.btn.small{min-height:44px;padding:8px 16px;font-size:16px}
+.btn:disabled{opacity:.35;cursor:default}
 .check{margin-top:10px}
-/* welcome */
-.targets{background:var(--brand-soft);border-radius:14px;padding:12px 16px;margin:14px 0}
-.namefield{display:block;font-weight:700;margin:14px 0 6px}
-.namefield input{display:block;width:100%;max-width:360px;margin-top:6px;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px}
-/* models */
-.models{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.model{appearance:none;background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--ink)}
-.model svg{width:100%;max-width:120px;height:auto}
-.model.open{border-color:var(--brand);background:#fff}
-.mlabel{font-size:14px;line-height:1.3;text-align:center}
-.tapme{font-size:13px;color:var(--brand);font-weight:700}
+.spark{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:60;animation:spark .8s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+
+/* tooltips */
+.tipwrap{position:relative}
+.tip{position:absolute;left:0;top:0;transform:translate(-50%,calc(-100% - 14px));background:var(--ink);color:#fff;padding:5px 10px;border-radius:9px;font-size:15px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}
+.tip.on{opacity:1}
+.tip::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:var(--ink)}
+
+/* be curious models */
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0}
+.model{margin:0;text-align:center}
+.model .tipwrap{background:#f7fafd;border:2px solid var(--line);border-radius:16px;padding:10px;cursor:crosshair;box-shadow:0 3px 0 #d3deea;transition:transform .28s cubic-bezier(.3,1.5,.5,1),box-shadow .28s,border-color .15s}
+.model .tipwrap:hover{border-color:var(--brand);transform:translateY(-12px) scale(1.05);box-shadow:0 7px 0 #b9cde2,0 26px 30px rgba(20,40,70,.25)}
+.model svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.model figcaption{font-size:15px;margin-top:6px;min-height:42px;line-height:1.3}
+.model figcaption .q-mark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark);font-weight:800}
+svg .hl{fill:rgba(242,183,5,.55);stroke:#c99700;stroke-width:2;pointer-events:none}
+
 /* grid explorer */
-.seg{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0 12px}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
 .seg button{appearance:none;border:2px solid var(--brand);background:#fff;color:var(--brand-dark);border-radius:999px;padding:8px 14px;font-weight:700;font-size:15px;cursor:pointer;min-height:44px}
 .seg button.on{background:var(--brand);color:#fff}
-.grid100{display:grid;grid-template-columns:repeat(10,1fr);width:min(100%,340px);aspect-ratio:1;border:2.5px solid var(--ink);margin:0 auto;touch-action:manipulation;background:#fff}
-.grid100 button{appearance:none;border:0;border-right:1px solid #9fb3c8;border-bottom:1px solid #9fb3c8;background:#fff;padding:0;margin:0;cursor:pointer;min-width:0}
-.grid100 button.on{background:var(--brand)}
-.readout{text-align:center;font-size:20px;margin:12px 0 8px}
-.pair{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
+.grid100{display:grid;grid-template-columns:repeat(10,1fr);width:min(100%,360px);aspect-ratio:1;border:3px solid var(--ink);touch-action:none;background:#fff;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.grid100 .cell{border-right:1px solid #9fb3c8;border-bottom:1px solid #9fb3c8;background:#fff;transition:background .08s}
+.grid100 .cell.on{background:var(--brand)}
+.grid100 .cell.pre{background:#fde9a6}
+.grid100 .cell.on.pre{background:#4f93cf}
+.readout{font-size:20px;margin:12px 0 8px}
+.bigval{font-size:30px;font-weight:800}
+.pair{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
 .pair figure{margin:0;text-align:center}
+.pair .tipwrap{cursor:crosshair}
+.pair svg{display:block;width:150px;height:150px}
 .pair figcaption{font-size:16px;margin-top:4px}
+
 /* place value chart */
-.pv{display:grid;border:2px solid var(--brand-dark);border-radius:12px;overflow:hidden;background:#fff;max-width:620px;margin:6px auto}
+.pv{display:grid;border:2.5px solid var(--brand-dark);border-radius:12px;overflow:hidden;background:#fff;max-width:640px;margin:8px auto}
 .pv .h{font-size:clamp(10px,2.8vw,14px);font-weight:700;color:#fff;text-align:center;padding:6px 2px;line-height:1.15;display:flex;align-items:center;justify-content:center}
-.pv .d{font-size:clamp(26px,7vw,40px);font-weight:800;text-align:center;padding:6px 0;border-left:1px solid var(--line);font-variant-numeric:tabular-nums;min-height:62px;display:flex;align-items:center;justify-content:center}
+.pv .d{font-size:clamp(26px,7vw,40px);font-weight:800;text-align:center;padding:6px 0;border-left:1px solid var(--line);font-variant-numeric:tabular-nums;min-height:66px;display:flex;align-items:center;justify-content:center;transition:background .15s}
 .pv .d.pt{border-left:0;padding:0}
 .pv .d.ph{color:#b7c4d1}
-.pv .d.hot{background:var(--brand-soft)}
-.digit{appearance:none;border:3px solid currentColor;background:#fff;border-radius:12px;font-size:clamp(26px,7vw,38px);font-weight:800;width:min(56px,90%);height:56px;cursor:pointer;line-height:1;display:grid;place-items:center}
-.digit.seen{background:currentColor}
-.digit.seen span{color:#fff}
-.info{background:#f7fafd;border-radius:14px;padding:12px 14px;margin-top:12px;min-height:56px}
-.info .blk{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.blockrow{display:flex;align-items:flex-end;justify-content:center;gap:6px 10px;flex-wrap:wrap;margin:8px 0 12px}
-.blockrow figure{margin:0;text-align:center;font-size:14px}
-.blockrow .arrow{font-size:13px;color:var(--muted);align-self:center;font-weight:700}
-.rule{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 14px}
+.pv .d.hot{background:#fff6d6}
+.digit{appearance:none;border:3px solid currentColor;background:#fff;border-radius:12px;font-size:clamp(26px,7vw,38px);font-weight:800;width:min(56px,90%);height:56px;cursor:pointer;line-height:1;display:grid;place-items:center;transition:transform .12s}
+.digit:hover,.digit.hot{transform:translateY(-3px) scale(1.06);box-shadow:0 5px 0 rgba(0,0,0,.12)}
+.digit.hot{background:currentColor}
+.digit.hot span{color:#fff}
+.stage-wrap{position:relative;background:linear-gradient(#f6f9fc,#e2ebf5);border-radius:16px;margin:13% 0 6px;border:2px solid var(--line)}
+#stage{display:block;width:100%;height:auto;margin-top:-12.5%;overflow:visible;cursor:grab;touch-action:pan-y;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;position:relative;z-index:2}
+#stage .bob{animation:bob 3.6s ease-in-out infinite}
+#stage .shadow{transform-box:fill-box;transform-origin:center;animation:shadowPulse 3.6s ease-in-out infinite}
+#stage .blk{transform-box:fill-box;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+#stage .blk.lift{transform:translateY(-16px) scale(1.1)}
+.stage-wrap.popup .blk{animation:rise 1s cubic-bezier(.2,1.45,.4,1) backwards}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes shadowPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.76);opacity:.5}}
+@keyframes rise{from{transform:translateY(80px) scaleY(.05);opacity:0}to{transform:none;opacity:1}}
+.stage-hint{position:absolute;left:12px;bottom:8px;z-index:3;font-size:13px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.8);border-radius:999px;padding:2px 10px;pointer-events:none}
+.info{background:#f7fafd;border-radius:14px;padding:12px 14px;margin-top:10px;min-height:56px}
+.speech-row{display:flex;gap:12px;align-items:center;margin:4px 0 10px}
+.kid{flex:none;width:64px;height:64px}
+.speech{background:#f3eafa;border-radius:18px;padding:12px 16px;position:relative;font-size:19px}
+.speech::before{content:"";position:absolute;left:-10px;top:22px;border:10px solid transparent;border-left:0;border-right-color:#f3eafa}
+/* slider */
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 10px}
 .rule>div{border-radius:14px;padding:10px;text-align:center;font-size:15px;line-height:1.35}
 .rule big{display:block;font-size:26px;font-weight:800;margin:2px 0}
 .rule .l{background:#e1f0fb;color:#0e4a7a}
 .rule .r{background:#fdeedd;color:#8a4a0c}
+.slide-wrap{position:relative;max-width:640px;margin:0 auto}
+.drag-digit{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:54px;height:58px;border-radius:12px;background:var(--brand);color:#fff;font-size:36px;font-weight:800;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 4px 0 #0e4a7a,0 8px 16px rgba(14,74,122,.3);z-index:2}
+.drag-digit.anim{transition:left .22s cubic-bezier(.3,1.4,.5,1),top .22s}
+.drag-digit.drag{cursor:grabbing;transform:translate(-50%,-62%) scale(1.08) rotate(-3deg)}
+.drag-digit:focus-visible{outline:4px solid var(--sun)}
 .ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.bigval{font-size:30px;font-weight:800}
+.chain{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain i{font-style:normal;font-size:13px;font-weight:800;border-radius:999px;padding:1px 8px}
+.chain i.up{background:#e1f0fb;color:#0e4a7a}
+.chain i.dn{background:#fdeedd;color:#8a4a0c}
+
 /* practice bits */
 .wallets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 8px}
-.wallet{background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.wallet{background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center;transition:transform .15s}
+.wallet:hover{transform:translateY(-3px) rotate(-1deg)}
 .wallet b{display:block}
 .wallet span{font-size:20px;font-weight:800;color:var(--brand-dark)}
 .bignum{font-size:46px;font-weight:800;text-align:center;letter-spacing:.06em;margin:4px 0 10px;font-variant-numeric:tabular-nums}
-.hl{border-radius:8px;padding:0 4px}
-.hl.blue{background:#d6eafc;color:#155a9c}
-.hl.orange{background:#fde3c8;color:#a14f06}
-.bignum .hl{border-bottom:5px solid currentColor}
-.speech{background:#f3eafa;border-radius:16px;padding:12px 16px;margin:4px 0 12px;position:relative}
+.dg{position:relative;display:inline-block;cursor:help;border-radius:8px;padding:0 3px;transition:background .12s}
+.dg:hover,.dg.show{background:#fff3c4}
+.dg::after{content:attr(data-place);position:absolute;left:50%;bottom:100%;transform:translate(-50%,-4px);background:var(--ink);color:#fff;font-size:14px;font-weight:600;letter-spacing:0;white-space:nowrap;padding:3px 9px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .12s}
+.dg:hover::after,.dg.show::after{opacity:1}
+.hl-blue{color:#155a9c;border-bottom:5px solid #155a9c}
+.hl-orange{color:#a14f06;border-bottom:5px solid #a14f06}
+.tag{border-radius:6px;padding:0 5px;font-weight:700}
+.tag.blue{background:#d6eafc;color:#155a9c}
+.tag.orange{background:#fde3c8;color:#a14f06}
 .steps{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-weight:800;font-size:22px;margin:8px 0}
 .steps i{font-style:normal;font-size:14px;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 10px}
+
 /* builder */
 .tray{display:flex;gap:10px;justify-content:center;min-height:68px;margin:10px 0;align-items:center}
-.tile{appearance:none;width:56px;height:60px;border-radius:12px;border:3px solid var(--brand);background:#fff;color:var(--ink);font-size:30px;font-weight:800;cursor:pointer;transition:transform .12s}
+.tile{appearance:none;width:56px;height:60px;border-radius:12px;border:3px solid var(--brand);background:#fff;color:var(--ink);font-size:30px;font-weight:800;cursor:grab;touch-action:none;user-select:none;transition:transform .12s,box-shadow .12s;box-shadow:0 3px 0 rgba(14,74,122,.25)}
+.tile:hover{transform:translateY(-3px)}
 .tile.sel{background:var(--brand);color:#fff;transform:translateY(-4px)}
+.tile.lifting{opacity:.35}
+.tile.ghost{position:fixed;left:0;top:0;pointer-events:none;transform:translate(-50%,-50%) scale(1.12) rotate(-5deg);z-index:70;box-shadow:0 12px 24px rgba(0,0,0,.25)}
 .slots{display:flex;align-items:flex-start;justify-content:center;gap:6px}
 .slot-wrap{display:flex;flex-direction:column;align-items:center;font-size:13px;color:var(--muted);gap:2px}
-.slot{appearance:none;width:64px;height:72px;border:3px dashed #8aa4bf;border-radius:12px;background:#f7fafd;color:var(--ink);font-size:34px;font-weight:800;cursor:pointer}
+.slot{width:68px;height:74px;border:3px dashed #8aa4bf;border-radius:14px;background:#f7fafd;display:grid;place-items:center;cursor:pointer;transition:background .12s,border-color .12s}
 .slot.filled{border-style:solid;border-color:var(--brand);background:#fff}
-.point{font-size:46px;font-weight:900;line-height:72px}
-/* reflect */
-textarea{width:100%;min-height:120px;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px;resize:vertical}
+.slot.over{background:#fff3c4;border-color:var(--sun)}
+.slot .tile{box-shadow:none}
+.point{font-size:46px;font-weight:900;line-height:74px}
+
+/* reflect + results */
 details{margin-top:10px}
 summary{cursor:pointer;font-weight:700;color:var(--brand-dark);padding:6px 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{appearance:none;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px}
+.chip{appearance:none;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
 .chip.sel{border-color:var(--tenths);background:#dff4ee}
-/* results */
-.stars{font-size:52px;color:#f2b705;letter-spacing:6px;line-height:1.1}
-.score{font-size:26px}
+.stars{font-size:52px;color:var(--sun);letter-spacing:6px;line-height:1.1}
+.score-big{font-size:26px}
 .review{text-align:left;max-width:460px;margin:10px auto 0}
-@media (max-width:420px){
-  h1{font-size:26px} h2{font-size:21px}
-  .card{padding:14px}
+.results{border:3px solid var(--sun);border-radius:20px;padding:18px;text-align:center;background:#fffdf3}
+
+nav.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:20}
+.nav-inner{max-width:920px;margin:0 auto;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.nav-inner .btn{min-width:150px}
+.pageof{color:var(--muted);font-weight:700;font-size:15px}
+
+@media (max-width:760px){
+  .two{grid-template-columns:1fr}
+  .pg{padding:18px 18px 14px}
+  .runhead,.pagefoot{padding-left:18px;padding-right:18px}
+  .banner{padding:24px 18px 28px}
+  .banner h1{font-size:32px}
+  main{padding-top:70px}
+  .hero3d{width:220px;height:220px;right:-46px;top:-66px}
+  .banner-text{max-width:none;padding-right:120px}
+  .dots{display:none}
+  .brand span{display:none}
+  .top-inner{justify-content:space-between}
+  .nav-inner .btn{min-width:0;flex:1}
+  .pageof{display:none}
+}
+@media (max-width:520px){
+  .opts.inline.n4{grid-template-columns:repeat(2,1fr)}
+  .opts.inline.n5{grid-template-columns:repeat(3,1fr)}
+  .sec{font-size:23px}
+  .sec .ico{width:40px;height:40px}
   .models{gap:6px}
-  .mlabel{font-size:12.5px}
+  .model .tipwrap{padding:5px}
+  .model figcaption{font-size:12.5px}
   .bignum{font-size:40px}
   .wallets{gap:6px}.wallet span{font-size:17px}
-  .slot{width:56px;height:66px}.point{line-height:66px}
+  .slot{width:58px;height:68px}.point{line-height:68px}
+  .exn{width:30px;height:30px;font-size:16px}
+  .ex{gap:8px}
+  .pair svg{width:130px;height:130px}
 }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="top-inner"><div class="top-title" id="topTitle">Lesson 3-2 · Decimals</div><div class="top-count" id="topCount"></div></div>
-  <div class="bar"><i id="bar"></i></div>
+  <div class="top-inner">
+    <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="#0e4a7a" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0zM12 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0z"/></svg><span>Decimals</span></div>
+    <div class="dots" id="dots" aria-label="Pages"></div>
+    <div class="score" id="score" title="Stars for answers right on the first try">★ 0</div>
+    <div class="dot-mascot" id="dot" title="Dot, the decimal point" aria-hidden="true">
+      <svg viewBox="-26 -26 52 52">
+        <circle r="22" fill="#1769aa"/><circle cx="-8" cy="-11" r="7" fill="rgba(255,255,255,.22)"/>
+        <g class="eyes"><ellipse cx="-7.5" cy="-3" rx="5.6" ry="6.2" fill="#fff"/><ellipse cx="7.5" cy="-3" rx="5.6" ry="6.2" fill="#fff"/>
+          <circle class="pupil" data-x="-7.5" cx="-7.5" cy="-3" r="2.9" fill="#1b2a3a"/><circle class="pupil" data-x="7.5" cx="7.5" cy="-3" r="2.9" fill="#1b2a3a"/></g>
+        <circle cx="-14.5" cy="7" r="3.2" fill="#ff9db0" opacity=".75"/><circle cx="14.5" cy="7" r="3.2" fill="#ff9db0" opacity=".75"/>
+        <path id="mouth" d="M-7 8 Q0 15 7 8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
 </header>
 
-<main id="main">
-<noscript><div class="card">This lesson needs JavaScript. Please open it in a normal web browser.</div></noscript>
+<main>
+<noscript><div class="page active"><div class="pg">This lesson needs JavaScript. Please open it in a normal web browser.</div></div></noscript>
+<div class="book" id="book">
 
-<!-- 0 Welcome -->
-<section class="screen" data-title="Welcome">
-  <div class="card">
-    <span class="kicker">Grade 5 · Unit 3 · Lesson 3-2</span>
-    <h1>Extend Place Value to Decimals</h1>
-    <p>The same digit can be worth very different amounts. It all depends on its place, even after the decimal point.</p>
-    <div class="targets"><b>Today I can…</b>
-      <ul>
-        <li>tell the value of a digit in the tenths, hundredths and thousandths places</li>
-        <li>explain that a digit is worth <b>10 times</b> as much one place to the left, and <b><span class="frac"><span>1</span><span>10</span></span></b> as much one place to the right</li>
-      </ul>
+<!-- ================= PAGE 1 ================= -->
+<article class="page" data-tip="Hi! I'm Dot, the decimal point. Move your mouse over the three squares!" data-tip-touch="Hi! I'm Dot, the decimal point. Tap the three squares!">
+  <div class="hero3d" id="hero" aria-hidden="true"><div class="hero-bob"><svg id="heroSvg" viewBox="0 0 300 300"></svg></div></div>
+  <div class="banner">
+    <div class="banner-text">
+      <span class="lesson-tag">MATHS</span>
+      <h1>Extend Place Value to Decimals</h1>
+      <span class="unit">Tenths · Hundredths · Thousandths</span>
     </div>
-    <label class="namefield">Your name<input id="name" type="text" autocomplete="off" maxlength="40" placeholder="Type your name"></label>
-    <p class="muted small">Your name and answers stay on this device. Tap an answer to check it. Your <b>first try</b> counts for your score, and you can keep trying until you get it right.</p>
   </div>
-</section>
+  <div class="pg">
+    <div class="two">
+      <div class="targets"><b>Today I can…</b>
+        <ul>
+          <li>tell the value of a digit in the tenths, hundredths and thousandths places</li>
+          <li>explain that a digit is worth <b>10 times</b> as much one place to the left, and <b><span class="frac"><span>1</span><span>10</span></span></b> as much one place to the right</li>
+        </ul>
+      </div>
+      <div>
+        <label class="namefield">My name<input id="name" type="text" autocomplete="off" maxlength="40" placeholder="Type your name"></label>
+        <p class="muted small" style="margin-top:8px">Your answers stay on this device. Your <b>first try</b> earns a ★. Keep trying until you get it right!</p>
+      </div>
+    </div>
 
-<!-- 1 Be Curious -->
-<section class="screen" data-title="Be Curious" data-topic="Tenths and hundredths models">
-  <div class="card">
-    <span class="kicker">Be Curious</span>
-    <h2>What do you notice? What do you wonder?</h2>
-    <p>The three big squares are all the same size. Tap each one.</p>
+    <h2 class="sec" style="--c:var(--curious)"><span class="ico" data-icon="search"></span>Be Curious</h2>
+    <p class="lead">What do you notice? What do you wonder?</p>
+    <p class="muted hover-text" data-touch="The three big squares are the same size. Tap inside each one.">The three big squares are the same size. Move your mouse inside each one.</p>
     <div class="models">
-      <button type="button" class="model" data-svg="one"><span class="tapme">Tap me</span><span class="mlabel" hidden>The whole square is shaded: <b>1 whole</b></span></button>
-      <button type="button" class="model" data-svg="tenth"><span class="tapme">Tap me</span><span class="mlabel" hidden>1 of 10 equal strips: <b>1 tenth</b> = <span class="frac"><span>1</span><span>10</span></span> = 0.1</span></button>
-      <button type="button" class="model" data-svg="hundredth"><span class="tapme">Tap me</span><span class="mlabel" hidden>1 of 100 equal squares: <b>1 hundredth</b> = <span class="frac"><span>1</span><span>100</span></span> = 0.01</span></button>
+      <figure class="model" data-mode="whole"><div class="tipwrap popup" style="--d:.35s"></div><figcaption><span class="q-mark">?</span></figcaption></figure>
+      <figure class="model" data-mode="tenth"><div class="tipwrap popup" style="--d:.5s"></div><figcaption><span class="q-mark">?</span></figcaption></figure>
+      <figure class="model" data-mode="hundredth"><div class="tipwrap popup" style="--d:.65s"></div><figcaption><span class="q-mark">?</span></figcaption></figure>
+    </div>
+    <div class="two">
+      <label class="lined">I notice…<textarea data-note="notice"></textarea></label>
+      <label class="lined">I wonder…<textarea data-note="wonder"></textarea></label>
+    </div>
+    <div class="box">
+      <div class="q" data-q="s1a"></div>
+      <div class="q" data-q="s1b"></div>
     </div>
   </div>
-  <div class="card"><div class="q" data-q="s1a"></div><div class="q" data-q="s1b"></div></div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 2 Explore grid -->
-<section class="screen" data-title="Shade the grid" data-topic="Shading tenths and hundredths">
-  <div class="card">
-    <span class="kicker green">Explore</span>
-    <h2>Shade the grid</h2>
-    <p>The big square is 1 whole, cut into 100 small squares. Pick a tool, then tap the grid.</p>
-    <div class="seg" role="group" aria-label="Shading tool">
-      <button type="button" data-tool="tenth" class="on">Tenth: a whole column</button>
-      <button type="button" data-tool="hundredth">Hundredth: one square</button>
+<!-- ================= PAGE 2 ================= -->
+<article class="page" data-tip="Click and drag across the grid to shade it!" data-tip-touch="Touch and slide your finger across the grid to shade it!">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Explore</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--tenths)"><span class="ico" data-icon="grid"></span>Explore: Shade the Grid</h2>
+    <p>The big square is <b>1 whole</b>, cut into 100 small squares. Choose a tool, then click and drag across the grid.</p>
+    <div class="two">
+      <div>
+        <div class="seg" role="group" aria-label="Shading tool">
+          <button type="button" data-tool="tenth" class="on">Tenth: a whole column</button>
+          <button type="button" data-tool="hundredth">Hundredth: one square</button>
+        </div>
+        <div class="grid100 popup" id="grid100"></div>
+        <p class="readout" id="gridRead" aria-live="polite"></p>
+        <button type="button" class="btn ghost small" id="gridClear">Clear the grid</button>
+      </div>
+      <div>
+        <div class="box" id="gridTask"></div>
+        <div class="sidebox" data-reveal-when="g1 g2" hidden>
+          <b>Compare them</b>
+          <div class="pair">
+            <figure class="popup"><div class="tipwrap" data-gridhover="30"></div><figcaption><b>0.3</b></figcaption></figure>
+            <figure class="popup"><div class="tipwrap" data-gridhover="3"></div><figcaption><b>0.03</b></figcaption></figure>
+          </div>
+          <p style="margin:0"><b>0.3</b> is <b>10 times</b> as much as 0.03.<br><b>0.03</b> is <b><span class="frac"><span>1</span><span>10</span></span> of</b> 0.3.</p>
+        </div>
+      </div>
     </div>
-    <div class="grid100" id="grid100"></div>
-    <p class="readout" id="gridRead" aria-live="polite"></p>
-    <div class="center"><button type="button" class="btn ghost small" id="gridClear">Clear the grid</button></div>
   </div>
-  <div class="card" id="gridTask"></div>
-  <div class="card note" data-reveal-when="g1 g2" hidden>
-    <h3>Compare them</h3>
-    <div class="pair"><figure><div data-gridsvg="30"></div><figcaption><b>0.3</b></figcaption></figure><figure><div data-gridsvg="3"></div><figcaption><b>0.03</b></figcaption></figure></div>
-    <p><b>0.3</b> is <b>10 times</b> as much as 0.03. And <b>0.03</b> is <b><span class="frac"><span>1</span><span>10</span></span> of</b> 0.3.</p>
-  </div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 3 Digit detective -->
-<section class="screen" data-title="Digit Detective" data-topic="Value of each digit in 1.111">
-  <div class="card">
-    <span class="kicker">Learn</span>
-    <h2>Digit Detective: 1.111</h2>
-    <p>Sam says: “Every 1 in <b>1.111</b> has the same value.” Tap each 1 to find out what it is really worth.</p>
-    <div id="ddChart"></div>
-    <div class="info" id="ddInfo" aria-live="polite">Tap a digit in the chart.</div>
+<!-- ================= PAGE 3 ================= -->
+<article class="page" data-tip="Move your mouse over the blocks. They turn and light up!" data-tip-touch="Tap a digit, or slide your finger across the blocks to turn them!">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Learn</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--learn)"><span class="ico" data-icon="bulb"></span>Learn</h2>
+    <div class="speech-row">
+      <svg class="kid" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="22" fill="#f1c48f"/><path d="M10 30c0-14 10-22 22-22s22 8 22 22c-5-6-12-9-22-9s-17 3-22 9z" fill="#3b2a20"/><circle cx="24" cy="35" r="2.6" fill="#1b2a3a"/><circle cx="40" cy="35" r="2.6" fill="#1b2a3a"/><path d="M25 44q7 5 14 0" stroke="#1b2a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+      <div class="speech">Sam says: “Every 1 in <b>1.111</b> has the same value.”</div>
+    </div>
+    <p><b>How can you help Sam?</b> <span class="hover-text" data-touch="Tap each 1 in the chart, or touch the blocks.">Point at each 1 in the chart, or move your mouse over the blocks.</span></p>
+    <div id="ddChart" class="popup"></div>
+    <div class="stage-wrap"><svg id="stage" viewBox="0 -80 640 360" role="img" aria-label="Base-ten blocks: a cube for 1, a flat for 0.1, a rod for 0.01 and a tiny cube for 0.001, drawn to scale"></svg><div class="stage-hint hover-text" data-touch="Slide to turn the blocks">Move your mouse to turn the blocks</div></div>
+    <div class="info" id="ddInfo" aria-live="polite">Each 1 shows a different block. Which one is biggest?</div>
+    <div class="sidebox pattern"><span class="tab">Pattern spotter</span><br>Look at the names: ten<b>ths</b>, hundred<b>ths</b>, thousand<b>ths</b>. Each name tells you how many equal parts 1 whole is cut into. Each block is <b><span class="frac"><span>1</span><span>10</span></span></b> the size of the block on its left.</div>
+    <div class="box"><div class="q" data-q="s3a"></div></div>
   </div>
-  <div class="card note" data-reveal-when="flag:dd" hidden>
-    <h3>All four blocks at the same scale</h3>
-    <div class="blockrow" id="ddRow"></div>
-    <p>Each block is <b><span class="frac"><span>1</span><span>10</span></span></b> the size of the block on its left. So each 1 is worth <span class="frac"><span>1</span><span>10</span></span> of the 1 on its left, and <b>10 times</b> the 1 on its right.</p>
-  </div>
-  <div class="card"><div class="q" data-q="s3a"></div></div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 4 Move the digit -->
-<section class="screen" data-title="Move the digit" data-topic="Moving a digit left or right">
-  <div class="card">
-    <span class="kicker">Learn</span>
-    <h2>Move the digit</h2>
+<!-- ================= PAGE 4 ================= -->
+<article class="page" data-tip="Grab the blue digit and drag it left and right!" data-tip-touch="Hold the blue digit and slide it left and right!">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Learn · Work Together</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--learn)"><span class="ico" data-icon="bulb"></span>Move the Digit</h2>
     <div class="rule">
       <div class="l">◀ One place <b>left</b><big>× 10</big>10 times as much</div>
       <div class="r">One place <b>right</b> ▶<big>÷ 10</big><span class="frac"><span>1</span><span>10</span></span> as much</div>
     </div>
-    <div id="slChart"></div>
-    <p class="readout" id="slVal"></p>
+    <p class="hover-text" data-touch="Hold the blue digit and slide it to another place.">Drag the blue digit to another place and drop it.</p>
+    <div class="slide-wrap" id="slWrap"><div id="slChart"></div><div class="drag-digit" id="slTile" tabindex="0" role="slider" aria-label="Digit position. Use the left and right arrow keys.">7</div></div>
+    <p class="readout center" id="slVal"></p>
     <div class="ctrl">
-      <button type="button" class="btn" id="slLeft">◀ Left</button>
-      <button type="button" class="btn" id="slRight">Right ▶</button>
+      <button type="button" class="btn small" id="slLeft">◀ One place left</button>
+      <button type="button" class="btn small" id="slRight">One place right ▶</button>
+      <button type="button" class="btn ghost small" id="slDigit">New digit</button>
     </div>
-    <div class="center"><button type="button" class="btn ghost small" id="slDigit">Try a new digit</button></div>
-    <p class="info" id="slMsg" aria-live="polite">Move the digit left and right. Watch its value.</p>
-  </div>
-  <div class="card"><div class="q" data-q="s4a"></div><div class="q" data-q="s4b"></div></div>
-</section>
+    <div class="info" id="slMsg" aria-live="polite">Move the digit and watch its value change.</div>
+    <div class="box"><div class="q" data-q="s4a"></div><div class="q" data-q="s4b"></div></div>
 
-<!-- 5 Work together -->
-<section class="screen" data-title="0.6 and 0.06" data-topic="Comparing 0.6 and 0.06">
-  <div class="card">
-    <span class="kicker green">Work Together</span>
-    <h2>Two ways to compare 0.6 and 0.06</h2>
-    <div class="pair"><figure><div data-gridsvg="60"></div><figcaption><b>0.6</b><br>6 tenths</figcaption></figure><figure><div data-gridsvg="6"></div><figcaption><b>0.06</b><br>6 hundredths</figcaption></figure></div>
-    <div class="q" data-q="s5a"></div>
-    <div class="q" data-q="s5b"></div>
-    <div class="note" data-reveal-when="s5a s5b" hidden><b>Two ways to say it:</b><br>0.6 is 10 times 0.06.<br>0.06 is <span class="frac"><span>1</span><span>10</span></span> of 0.6.</div>
-  </div>
-</section>
-
-<!-- 6 Which is true -->
-<section class="screen" data-title="Which is true?" data-topic="Which statement is true">
-  <div class="card">
-    <span class="kicker orange">Practice</span>
-    <h2>Which statement is true?</h2>
-    <div class="q" data-q="s6a"></div>
-    <div class="q" data-q="s6b"></div>
-  </div>
-</section>
-
-<!-- 7 Money -->
-<section class="screen" data-title="Pocket money" data-topic="Money: 10 times and 1/10 of">
-  <div class="card">
-    <span class="kicker orange">Practice</span>
-    <h2>Pocket money</h2>
-    <div class="wallets">
-      <div class="wallet"><b>Mariam</b><span>AED 5.00</span></div>
-      <div class="wallet"><b>Omar</b><span>AED 0.50</span></div>
-      <div class="wallet"><b>Lina</b><span>AED 0.05</span></div>
+    <h2 class="sec" style="--c:var(--together)"><span class="ico" data-icon="people"></span>Work Together</h2>
+    <p class="lead">Two ways to compare 0.6 and 0.06</p>
+    <div class="pair">
+      <figure class="popup"><div class="tipwrap" data-gridhover="60"></div><figcaption><b>0.6</b> · 6 tenths</figcaption></figure>
+      <figure class="popup"><div class="tipwrap" data-gridhover="6"></div><figcaption><b>0.06</b> · 6 hundredths</figcaption></figure>
     </div>
-    <div class="q" data-q="s7a"></div>
-    <div class="q" data-q="s7b"></div>
-    <div class="q" data-q="s7c"></div>
-    <div class="q" data-q="s7d"></div>
-  </div>
-</section>
-
-<!-- 8 Same digit -->
-<section class="screen" data-title="Same digit, different value" data-topic="Same digit in different places">
-  <div class="card">
-    <span class="kicker orange">Practice</span>
-    <h2>Same digit, different value</h2>
-    <p class="bignum">5.3<span class="hl blue">7</span><span class="hl orange">7</span></p>
-    <div class="q" data-q="s8a"></div><div class="q" data-q="s8b"></div><div class="q" data-q="s8c"></div>
-  </div>
-  <div class="card">
-    <p class="bignum"><span class="hl blue">4</span>.<span class="hl orange">4</span>19</p>
-    <div class="q" data-q="s8d"></div><div class="q" data-q="s8e"></div><div class="q" data-q="s8f"></div>
-  </div>
-</section>
-
-<!-- 9 Error analysis -->
-<section class="screen" data-title="Error analysis" data-topic="Digits two places apart">
-  <div class="card">
-    <span class="kicker purple">Error Analysis</span>
-    <h2>Is Rami right?</h2>
-    <div class="speech">Rami writes <b>45.4</b> and says: “The 4 in the tens place is worth 10 times the 4 in the tenths place.”</div>
-    <p class="bignum"><span class="hl blue">4</span>5.<span class="hl orange">4</span></p>
-    <div class="q" data-q="s9a"></div>
-    <div class="q" data-q="s9b"></div>
-    <div class="note" data-reveal-when="s9b" hidden>
-      <div class="steps"><span>0.4</span><i>× 10</i><span>4</span><i>× 10</i><span>40</span></div>
-      Tenths to tens is <b>two</b> places left, so the value is 10 × 10 = <b>100 times</b> as much.
+    <div class="box">
+      <div class="q" data-q="s5a"></div>
+      <div class="q" data-q="s5b"></div>
+      <div class="sidebox" data-reveal-when="s5a s5b" hidden><b>Two ways to say it:</b><br>0.6 is 10 times 0.06.<br>0.06 is <span class="frac"><span>1</span><span>10</span></span> of 0.6.</div>
     </div>
   </div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 10 Digit hunt -->
-<section class="screen" data-title="Digit hunt" data-topic="Finding a digit 10 times as much">
-  <div class="card">
-    <span class="kicker orange">Practice</span>
-    <h2>Digit hunt</h2>
-    <div class="q" data-q="s10"></div>
+<!-- ================= PAGE 5 ================= -->
+<article class="page" data-tip="Practice time! Read each sentence carefully." data-tip-touch="Practice time! Read each sentence carefully.">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Practice</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--practice)"><span class="ico" data-icon="pencil"></span>Practice</h2>
+    <div class="ex"><span class="exn">1</span><div class="exb"><div class="extitle">Which statement is true?</div><div class="q" data-q="s6a"></div></div></div>
+    <div class="ex"><span class="exn">2</span><div class="exb"><div class="extitle">Which statement is true?</div><div class="q" data-q="s6b"></div></div></div>
+    <div class="ex"><span class="exn">3</span><div class="exb">
+      <div class="extitle">Pocket money</div>
+      <div class="wallets">
+        <div class="wallet popup"><b>Mariam</b><span>AED 5.00</span></div>
+        <div class="wallet popup"><b>Omar</b><span>AED 0.50</span></div>
+        <div class="wallet popup"><b>Lina</b><span>AED 0.05</span></div>
+      </div>
+      <div class="q" data-q="s7a"></div><div class="q" data-q="s7b"></div><div class="q" data-q="s7c"></div><div class="q" data-q="s7d"></div>
+    </div></div>
   </div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 11 Race -->
-<section class="screen" data-title="Race time" data-topic="Three 2s in 22.2">
-  <div class="card">
-    <span class="kicker green">Real Life</span>
-    <h2>Race time: 22.2 seconds</h2>
-    <p>In a school race, Huda ran 100 metres in <b>22.2 seconds</b>. The digit 2 appears three times!</p>
-    <div id="raceChart"></div>
-    <div class="q" data-q="s11a"></div>
-    <div class="q" data-q="s11b"></div>
+<!-- ================= PAGE 6 ================= -->
+<article class="page" data-tip="Point at any digit in a big number to see its place!" data-tip-touch="Tap any digit in a big number to see its place!">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Practice</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--practice)"><span class="ico" data-icon="pencil"></span>Practice</h2>
+    <div class="ex"><span class="exn">4</span><div class="exb">
+      <div class="extitle">Same digit, different value</div>
+      <p class="bignum popup" data-num="5.377" data-hl="3:blue 4:orange"></p>
+      <div class="q" data-q="s8a"></div><div class="q" data-q="s8b"></div><div class="q" data-q="s8c"></div>
+      <p class="bignum popup" data-num="4.419" data-hl="0:blue 2:orange" style="margin-top:14px"></p>
+      <div class="q" data-q="s8d"></div><div class="q" data-q="s8e"></div><div class="q" data-q="s8f"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">5</span><div class="exb">
+      <div class="extitle">Error Analysis</div>
+      <div class="speech" style="margin:6px 0 10px 10px">Rami writes <b>45.4</b> and says: “The 4 in the tens place is worth 10 times the 4 in the tenths place.”</div>
+      <p class="bignum popup" data-num="45.4" data-hl="0:blue 3:orange"></p>
+      <div class="q" data-q="s9a"></div><div class="q" data-q="s9b"></div>
+      <div class="sidebox" data-reveal-when="s9b" hidden>
+        <div class="steps"><span>0.4</span><i>× 10</i><span>4</span><i>× 10</i><span>40</span></div>
+        Tenths to tens is <b>two</b> places left, so the value is 10 × 10 = <b>100 times</b> as much.
+      </div>
+    </div></div>
   </div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 12 Build -->
-<section class="screen" data-title="Build a number" data-topic="Build a number">
-  <div class="card">
-    <span class="kicker purple">Extend Your Thinking</span>
-    <h2>Build a number</h2>
-    <p>Use the digits <b>3</b>, <b>6</b> and <b>8</b> once each. Compare with the number <b>3.68</b>.</p>
-    <div class="q" id="build1"></div>
+<!-- ================= PAGE 7 ================= -->
+<article class="page" data-tip="Drag the number tiles into the boxes to build a number!" data-tip-touch="Slide the number tiles into the boxes, or tap a tile then tap a box!">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Practice · Extend Your Thinking</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--practice)"><span class="ico" data-icon="pencil"></span>Practice</h2>
+    <div class="ex"><span class="exn">6</span><div class="exb"><div class="extitle">Digit hunt</div><div class="q" data-q="s10"></div></div></div>
+    <div class="ex"><span class="exn">7</span><div class="exb">
+      <div class="extitle">Race time</div>
+      <p>In a school race, Huda ran 100 metres in <span class="bignum" data-num="22.2" style="font-size:28px;margin:0;letter-spacing:.03em"></span> seconds. The digit 2 appears three times!</p>
+      <div class="q" data-q="s11a"></div><div class="q" data-q="s11b"></div>
+    </div></div>
+    <h2 class="sec" style="--c:var(--extend)"><span class="ico" data-icon="star"></span>Extend Your Thinking</h2>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">8</span><div class="exb">
+      <p>Use the digits <b>3</b>, <b>6</b> and <b>8</b> once each. Compare with the number <b>3.68</b>.</p>
+      <div class="q" id="build1"></div>
+      <div class="q" id="build2"></div>
+    </div></div>
   </div>
-  <div class="card"><div class="q" id="build2"></div></div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 13 Reflect -->
-<section class="screen" data-title="Reflect">
-  <div class="card">
-    <span class="kicker">Reflect</span>
-    <h2>Think about it</h2>
+<!-- ================= PAGE 8 ================= -->
+<article class="page" data-results="1" data-tip="Last page! Show your score to your teacher." data-tip-touch="Last page! Show your score to your teacher.">
+  <div class="runhead"><span>Place Value to Decimals</span><span>Reflect</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--reflect)"><span class="ico" data-icon="chat"></span>Reflect</h2>
     <p class="prompt">How is the place value pattern in decimals like the pattern in whole numbers?</p>
-    <textarea id="reflect" placeholder="Write your idea here…"></textarea>
+    <textarea id="reflect" class="lined-ta" placeholder="Write your idea here…"></textarea>
     <details><summary>See an example answer</summary>
       <p>It is the same pattern on both sides of the decimal point. Each place is worth 10 times the place to its right, and <span class="frac"><span>1</span><span>10</span></span> of the place to its left. For example, 300 is 10 times 30, and 0.3 is 10 times 0.03.</p>
     </details>
+    <div class="sidebox" style="margin-top:18px">
+      <b>Feelings check</b><br>When you feel angry or upset, what helps you calm down? Pick any.
+      <div class="chips" id="chips" style="margin-top:8px"></div>
+    </div>
+    <div class="results popup" id="results"></div>
+    <p class="center" style="margin-top:14px"><button type="button" class="btn ghost small" id="restart">Start again</button></p>
   </div>
-  <div class="card">
-    <h3>Feelings check</h3>
-    <p>When you feel angry or upset, what helps you calm down? Pick any.</p>
-    <div class="chips" id="chips"></div>
-  </div>
-</section>
+  <footer class="pagefoot"><span>Extend Place Value to Decimals</span><span class="pno"></span></footer>
+</article>
 
-<!-- 14 Results -->
-<section class="screen" data-title="Your results" data-show="results">
-  <div class="card center" id="results"></div>
-  <div class="card center"><button type="button" class="btn ghost" id="restart">Start again</button></div>
-</section>
+</div>
 </main>
 
 <nav class="bottom"><div class="nav-inner">
-  <button type="button" class="btn ghost" id="back">◀ Back</button>
-  <button type="button" class="btn" id="next">Next ▶</button>
+  <button type="button" class="btn ghost" id="back">◀ Previous page</button>
+  <span class="pageof" id="pageof"></span>
+  <button type="button" class="btn" id="next">Next page ▶</button>
 </div></nav>
 
 <script>
 (function () {
 'use strict';
-var KEY = 'g5-lesson-3-2-decimals-v1';
+var KEY = 'pv-decimals-book-v2';
+var CALM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var HOVER = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
 var COL = {hunds:'#34495e', tens:'#5d6d7e', ones:'#2e86de', tenths:'#119c7f', hund:'#e07b16', thou:'#8e44ad', ink:'#1b2a3a', brand:'#1769aa'};
 var PLACES = [
-  {p:2,  label:'Hun&shy;dreds',      name:'hundreds',    color:COL.hunds},
-  {p:1,  label:'Tens',               name:'tens',        color:COL.tens},
-  {p:0,  label:'Ones',               name:'ones',        color:COL.ones},
-  {p:-1, label:'Tenths',             name:'tenths',      color:COL.tenths},
-  {p:-2, label:'Hun&shy;dredths',    name:'hundredths',  color:COL.hund},
-  {p:-3, label:'Thou&shy;sandths',   name:'thousandths', color:COL.thou}
+  {p:2,  label:'Hun&shy;dreds',    name:'hundreds',    color:COL.hunds},
+  {p:1,  label:'Tens',             name:'tens',        color:COL.tens},
+  {p:0,  label:'Ones',             name:'ones',        color:COL.ones},
+  {p:-1, label:'Tenths',           name:'tenths',      color:COL.tenths},
+  {p:-2, label:'Hun&shy;dredths',  name:'hundredths',  color:COL.hund},
+  {p:-3, label:'Thou&shy;sandths', name:'thousandths', color:COL.thou}
 ];
 function placeOf(p){ for (var i=0;i<PLACES.length;i++) if (PLACES[i].p===p) return PLACES[i]; }
 function frac(n,d){ return '<span class="frac"><span>'+n+'</span><span>'+d+'</span></span>'; }
@@ -416,256 +574,261 @@ function denom(p){ return pow10(-p).toLocaleString('en-US'); }
 function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function $(s,r){ return (r||document).querySelector(s); }
 function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function capture(el,e){ try { el.setPointerCapture(e.pointerId); } catch (x) {} }
 
 /* ---------- state ---------- */
-var state = {name:'', idx:0, items:{}, reflect:'', mind:[]};
+var state = {name:'', idx:0, items:{}, reflect:'', mind:[], notes:{}};
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
-function load(){ try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && typeof s==='object' && s.items) { for (var k in state) if (k in s) state[k]=s[k]; } } catch (e) {} }
-function item(id){ return state.items[id] || (state.items[id] = {tries:0, first:null, solved:false}); }
-function record(id, ok){ var it=item(id); it.tries++; if (it.first===null) it.first=!!ok; if (ok) it.solved=true; save(); }
+function load(){ try { var s=JSON.parse(localStorage.getItem(KEY)||'null'); if (s && typeof s==='object' && s.items) { for (var k in state) if (k in s) state[k]=s[k]; } } catch (e) {} }
+function item(id){ return state.items[id] || (state.items[id]={tries:0, first:null, solved:false}); }
+function record(id, ok){
+  var it=item(id); it.tries++; if (it.first===null) it.first=!!ok; if (ok) it.solved=true; save();
+  updateScore(ok && it.first);
+}
 function solved(id){ return !!(state.items[id] && state.items[id].solved); }
-function setFlag(id){ var it=item(id); it.solved=true; save(); updateReveals(); }
-
-var GRADED = [], TOPIC = {};
-function reg(id, el){ if (GRADED.indexOf(id)<0) { GRADED.push(id); var sec=el.closest('section'); TOPIC[id]=(sec && sec.getAttribute('data-topic')) || ''; } }
-
-function updateReveals(){
-  $$('[data-reveal-when]').forEach(function(el){
-    var ids = el.getAttribute('data-reveal-when').split(/\s+/);
-    el.hidden = !ids.every(solved);
-  });
+var GRADED=[], TOPIC={};
+function reg(id, el){ if (GRADED.indexOf(id)<0){ GRADED.push(id); var pg=el.closest('.page'); var t=el.closest('.exb'); TOPIC[id]=(t && $('.extitle',t) ? $('.extitle',t).textContent : (pg && $('.sec',pg) ? $('.sec',pg).textContent : '')).trim(); } }
+function updateReveals(){ $$('[data-reveal-when]').forEach(function(el){ el.hidden = !el.getAttribute('data-reveal-when').split(/\s+/).every(solved); }); }
+function fb(el, ok, html){ el.className='fb show '+(ok?'ok':'no'); el.innerHTML=html; }
+function updateScore(popIt){
+  var n=GRADED.filter(function(id){ return state.items[id] && state.items[id].first===true; }).length;
+  var s=$('#score'); s.textContent='★ '+n;
+  if (popIt){ s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); }
 }
-function sizeOpts(box, n){ box.style.setProperty('--n', n); box.classList.add('n'+n); }
-function fb(el, ok, html){ el.className = 'fb show ' + (ok ? 'ok' : 'no'); el.innerHTML = html; }
 
-/* ---------- SVG helpers ---------- */
-function squareSVG(kind){
-  var S=120, u=12, s='<svg viewBox="-2 -2 124 124" aria-hidden="true">';
-  s += '<rect width="'+S+'" height="'+S+'" fill="'+(kind==='one'?COL.ones:'#fff')+'"/>';
-  if (kind==='tenth') s += '<rect width="'+u+'" height="'+S+'" fill="'+COL.tenths+'"/>';
-  if (kind==='hundredth') s += '<rect width="'+u+'" height="'+u+'" fill="'+COL.hund+'"/>';
-  if (kind!=='one') for (var i=1;i<10;i++) {
-    s += '<line x1="'+i*u+'" y1="0" x2="'+i*u+'" y2="'+S+'" stroke="#34495e" stroke-width="1"/>';
-    if (kind==='hundredth') s += '<line x1="0" y1="'+i*u+'" x2="'+S+'" y2="'+i*u+'" stroke="#34495e" stroke-width="1"/>';
+/* ---------- mascot ---------- */
+var dot=$('#dot'), bubble=$('#bubble'), bubbleT=0;
+var pupils=$$('.pupil', dot);
+window.addEventListener('pointermove', function(e){
+  var r=dot.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var dx=e.clientX-cx, dy=e.clientY-cy, d=Math.hypot(dx,dy)||1, k=Math.min(1,d/120)*2.7;
+  pupils.forEach(function(pp){ pp.setAttribute('cx', (+pp.getAttribute('data-x')+dx/d*k).toFixed(2)); pp.setAttribute('cy', (-3+dy/d*k).toFixed(2)); });
+}, {passive:true});
+setInterval(function(){ dot.classList.add('blink'); setTimeout(function(){ dot.classList.remove('blink'); }, 140); }, 3600);
+function say(msg, mood){
+  bubble.innerHTML=msg; bubble.classList.add('on');
+  clearTimeout(bubbleT); bubbleT=setTimeout(function(){ bubble.classList.remove('on'); }, 4200);
+  dot.classList.remove('cheer','hmm'); void dot.offsetWidth;
+  var mouth=$('#mouth');
+  if (mood==='cheer'){ dot.classList.add('cheer'); mouth.setAttribute('d','M-8 6 Q0 18 8 6 Z'); mouth.setAttribute('fill','#fff'); }
+  else if (mood==='hmm'){ dot.classList.add('hmm'); mouth.setAttribute('d','M-6 10 Q0 7 6 10'); mouth.setAttribute('fill','none'); }
+  else { mouth.setAttribute('d','M-7 8 Q0 15 7 8'); mouth.setAttribute('fill','none'); }
+  if (mood){ setTimeout(function(){ mouth.setAttribute('d','M-7 8 Q0 15 7 8'); mouth.setAttribute('fill','none'); }, 1600); }
+}
+dot.addEventListener('click', function(){ var pg=pages[state.idx]; say(tipOf(pg)); });
+var GOOD=['Great thinking!','You got it!','Super work!','Brilliant!','Yes! Well done!','Nice one!'];
+var RETRY=['You kept trying. Well done!','Got it! Never give up!'];
+var OOPS=['Not yet. Read the hint and try again.','Hmm, look again!','Almost! Check the hint.'];
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function react(ok, first, el){
+  if (ok){ say(first?pick(GOOD):pick(RETRY),'cheer'); if (el) burst(el); }
+  else say(pick(OOPS),'hmm');
+}
+function burst(el){
+  var r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var cols=[COL.ones,COL.tenths,COL.hund,COL.thou,'#f2b705'];
+  for (var i=0;i<14;i++){
+    var s=document.createElement('span'); s.className='spark';
+    var a=Math.random()*Math.PI*2, d=50+Math.random()*60;
+    s.style.left=cx+'px'; s.style.top=cy+'px'; s.style.background=cols[i%cols.length];
+    s.style.setProperty('--dx',(Math.cos(a)*d).toFixed(0)+'px'); s.style.setProperty('--dy',(Math.sin(a)*d-30).toFixed(0)+'px');
+    document.body.appendChild(s); setTimeout(function(x){ return function(){ x.remove(); }; }(s), 850);
   }
-  return s + '<rect width="'+S+'" height="'+S+'" fill="none" stroke="'+COL.ink+'" stroke-width="2.5"/></svg>';
 }
-function gridSVG(n){ // n hundredths, shaded a column at a time
-  var S=110, u=11, s='<svg viewBox="-2 -2 114 114" width="110" height="110" aria-hidden="true"><rect width="110" height="110" fill="#fff"/>';
-  for (var k=0;k<n;k++) s += '<rect x="'+Math.floor(k/10)*u+'" y="'+(k%10)*u+'" width="'+u+'" height="'+u+'" fill="'+COL.brand+'"/>';
-  for (var i=1;i<10;i++) s += '<line x1="'+i*u+'" y1="0" x2="'+i*u+'" y2="'+S+'" stroke="#9fb3c8"/><line x1="0" y1="'+i*u+'" x2="'+S+'" y2="'+i*u+'" stroke="#9fb3c8"/>';
-  return s + '<rect width="'+S+'" height="'+S+'" fill="none" stroke="'+COL.ink+'" stroke-width="2.5"/></svg>';
-}
-function shade(hex, f){
-  var n=parseInt(hex.slice(1),16), rgb=[n>>16, n>>8&255, n&255];
-  return '#'+rgb.map(function(v){ v = Math.round(f>0 ? v+(255-v)*f : v*(1+f)); return ('0'+v.toString(16)).slice(-2); }).join('');
-}
-function isoBox(w,d,h,u,color){
-  var c=Math.cos(Math.PI/6);
-  function P(x,y,z){ return [(x-y)*c*u, (x+y)*0.5*u - z*u]; }
-  var xs=[], ys=[];
-  [0,w].forEach(function(x){ [0,d].forEach(function(y){ [0,h].forEach(function(z){ var q=P(x,y,z); xs.push(q[0]); ys.push(q[1]); }); }); });
-  var minX=Math.min.apply(null,xs), minY=Math.min.apply(null,ys), pad=2;
-  var W=Math.max.apply(null,xs)-minX+pad*2, H=Math.max.apply(null,ys)-minY+pad*2;
-  function T(a){ var q=P(a[0],a[1],a[2]); return [(q[0]-minX+pad).toFixed(1), (q[1]-minY+pad).toFixed(1)]; }
-  function poly(pts, fill){ return '<polygon points="'+pts.map(function(a){return T(a).join(',');}).join(' ')+'" fill="'+fill+'" stroke="'+COL.ink+'" stroke-width="1.2" stroke-linejoin="round"/>'; }
-  function L(a,b){ var p=T(a), q=T(b); return '<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(27,42,58,.35)" stroke-width=".7"/>'; }
-  var s='<svg viewBox="0 0 '+W.toFixed(1)+' '+H.toFixed(1)+'" width="'+Math.round(W)+'" height="'+Math.round(H)+'" aria-hidden="true">';
-  s += poly([[0,0,h],[w,0,h],[w,d,h],[0,d,h]], shade(color,.45));
-  s += poly([[w,0,0],[w,d,0],[w,d,h],[w,0,h]], shade(color,-.25));
-  s += poly([[0,d,0],[w,d,0],[w,d,h],[0,d,h]], color);
-  var i;
-  for (i=1;i<w;i++){ s+=L([i,0,h],[i,d,h]); s+=L([i,d,0],[i,d,h]); }
-  for (i=1;i<d;i++){ s+=L([0,i,h],[w,i,h]); s+=L([w,i,0],[w,i,h]); }
-  for (i=1;i<h;i++){ s+=L([w,0,i],[w,d,i]); s+=L([0,d,i],[w,d,i]); }
-  return s+'</svg>';
-}
-var BLOCKS = { 0:[10,10,10], '-1':[10,10,1], '-2':[10,1,1], '-3':[1,1,1] };
-function blockSVG(p,u){ var b=BLOCKS[p]; return isoBox(b[0],b[1],b[2],u,placeOf(p).color); }
 
-function pvChart(ps, cell, cls){
-  var hasPoint = ps.indexOf(0)>=0 && ps.indexOf(-1)>=0, tpl=[], head='', row='';
-  ps.forEach(function(p){
-    if (p===-1 && hasPoint){ tpl.push('16px'); head+='<div class="h" style="background:#0e4a7a"></div>'; row+='<div class="d pt">.</div>'; }
-    var pl=placeOf(p), c=cell(p);
-    tpl.push('1fr');
-    head += '<div class="h" style="background:'+pl.color+'">'+pl.label+'</div>';
-    row += '<div class="d'+(c.cls?' '+c.cls:'')+'" data-p="'+p+'">'+c.html+'</div>';
+/* ---------- icons + small art ---------- */
+var ICONS={
+  search:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/>',
+  grid:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/>',
+  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.6.8 1.3.8 2.4h6c0-1.1.2-1.8.8-2.4A6 6 0 0 0 12 3z"/>',
+  people:'<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.6"/><path d="M2.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6M13.5 15.2c.9-.8 1.9-1.2 3-1.2 2.5 0 4.5 2.4 4.5 5.5"/>',
+  pencil:'<path d="M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19z M14 7l3.5 3.5"/>',
+  star:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',
+  chat:'<path d="M4 5h16v10H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/>'
+};
+$$('[data-icon]').forEach(function(el){ el.innerHTML='<svg viewBox="0 0 24 24">'+ICONS[el.getAttribute('data-icon')]+'</svg>'; });
+
+/* ---------- hover-able square models ---------- */
+function squareSVG(mode, n){
+  var S=150, u=15, s='<svg viewBox="-3 -3 156 156" aria-hidden="true"><rect width="150" height="150" fill="'+(mode==='whole'?COL.ones:'#fff')+'"/>', i, k;
+  if (mode==='tenth') s+='<rect width="15" height="150" fill="'+COL.tenths+'"/>';
+  if (mode==='hundredth') s+='<rect width="15" height="15" fill="'+COL.hund+'"/>';
+  if (mode==='grid') for (k=0;k<n;k++) s+='<rect x="'+Math.floor(k/10)*u+'" y="'+(k%10)*u+'" width="'+u+'" height="'+u+'" fill="'+COL.brand+'"/>';
+  if (mode!=='whole') for (i=1;i<10;i++){
+    s+='<line x1="'+i*u+'" y1="0" x2="'+i*u+'" y2="150" stroke="'+(mode==='grid'?'#9fb3c8':'#34495e')+'"/>';
+    if (mode!=='tenth') s+='<line x1="0" y1="'+i*u+'" x2="150" y2="'+i*u+'" stroke="'+(mode==='grid'?'#9fb3c8':'#34495e')+'"/>';
+  }
+  return s+'<rect width="150" height="150" fill="none" stroke="'+COL.ink+'" stroke-width="3"/><rect class="hl" x="0" y="0" width="0" height="0" rx="2"/></svg>';
+}
+function attachHover(wrap, mode, n, onSeen){
+  wrap.innerHTML=squareSVG(mode, n);
+  var svg=$('svg',wrap), hl=$('.hl',svg), tip=document.createElement('div'); tip.className='tip'; wrap.appendChild(tip);
+  function at(e){
+    var r=svg.getBoundingClientRect(), x=(e.clientX-r.left)/r.width*156-3, y=(e.clientY-r.top)/r.height*156-3;
+    if (x<0||y<0||x>=150||y>=150){ hide(); return; }
+    var c=Math.floor(x/15), rr=Math.floor(y/15), box, txt;
+    if (mode==='whole'){ box=[0,0,150,150]; txt='1 whole = <b>1</b>'; }
+    else if (mode==='tenth'){ box=[c*15,0,15,150]; txt='1 tenth = '+TENTH+' = <b>0.1</b>'; }
+    else if (mode==='hundredth'){ box=[c*15,rr*15,15,15]; txt='1 hundredth = '+frac(1,100)+' = <b>0.01</b>'; }
+    else {
+      var k=c*10+rr;
+      if (n>=10 && n%10===0){ box=[c*15,0,15,150]; txt = c<n/10 ? '1 tenth = 10 hundredths' : 'not shaded'; }
+      else { box=[c*15,rr*15,15,15]; txt = k<n ? '1 hundredth = <b>0.01</b>' : 'not shaded'; }
+    }
+    hl.setAttribute('x',box[0]); hl.setAttribute('y',box[1]); hl.setAttribute('width',box[2]); hl.setAttribute('height',box[3]);
+    var wr=wrap.getBoundingClientRect();
+    tip.innerHTML=txt; tip.style.left=Math.max(70,Math.min(wr.width-70,e.clientX-wr.left))+'px'; tip.style.top=(e.clientY-wr.top)+'px'; tip.classList.add('on');
+    if (onSeen) onSeen();
+  }
+  function hide(){ hl.setAttribute('width',0); tip.classList.remove('on'); }
+  svg.addEventListener('pointermove', at); svg.addEventListener('pointerdown', at); svg.addEventListener('pointerleave', hide);
+}
+function setupModels(){
+  var CAP={whole:'<b>1 whole</b><br>= 1', tenth:'<b>1 tenth</b><br>= '+TENTH+' = 0.1', hundredth:'<b>1 hundredth</b><br>= '+frac(1,100)+' = 0.01'};
+  var seen={};
+  $$('.model').forEach(function(f){
+    var mode=f.getAttribute('data-mode'), cap=$('figcaption',f);
+    attachHover($('.tipwrap',f), mode, 0, function(){
+      if (seen[mode]) return; seen[mode]=1; cap.innerHTML=CAP[mode];
+      if (Object.keys(seen).length===3) say('You found all three! The pieces get smaller and smaller.','cheer');
+    });
   });
-  return '<div class="pv '+(cls||'')+'" style="grid-template-columns:'+tpl.join(' ')+'">'+head+row+'</div>';
+  $$('[data-gridhover]').forEach(function(w){ attachHover(w,'grid',+w.getAttribute('data-gridhover')); });
 }
 
 /* ---------- question bank (original practice items) ---------- */
-var B = '<span class="blank">?</span>';
-var Q = {
+var B='<span class="blank">?</span>';
+var Q={
   s1a:{inline:1, prompt:'How many <b>tenths</b> make 1 whole?', options:[
-    {t:'10', ok:1},
-    {t:'100', why:'Count the strips in the middle square. Each strip is 1 tenth.'},
-    {t:'1,000', why:'Count the strips in the middle square. Each strip is 1 tenth.'}],
+    {t:'10',ok:1},{t:'100',why:'Count the strips in the middle square. Each strip is 1 tenth.'},{t:'1,000',why:'Count the strips in the middle square. Each strip is 1 tenth.'}],
     explain:'10 tenths = 1 whole.'},
   s1b:{inline:1, prompt:'How many <b>hundredths</b> fit in 1 tenth?', options:[
-    {t:'1', why:'Look at one column of the last square. How many small squares are in it?'},
-    {t:'10', ok:1},
-    {t:'100', why:'100 hundredths fill the whole square. How many fit in just one column?'}],
+    {t:'1',why:'Look at one column of the last square. How many small squares are in it?'},{t:'10',ok:1},{t:'100',why:'100 hundredths fill the whole square. How many fit in just one column?'}],
     explain:'One column (1 tenth) holds 10 small squares, so 1 tenth = 10 hundredths.'},
   s3a:{prompt:'Is Sam right?', options:[
-    {t:'Yes. Every digit is a 1, so they are all worth the same.', why:'Look at the values you found: 1, 0.1, 0.01 and 0.001. Are they equal?'},
-    {t:'No. The value of each 1 depends on its place.', ok:1}],
+    {t:'Yes. Every digit is a 1, so they are all worth the same.',why:'Look at the blocks: 1, 0.1, 0.01 and 0.001. Are they the same size?'},
+    {t:'No. The value of each 1 depends on its place.',ok:1}],
     explain:'Each 1 is worth '+TENTH+' of the 1 on its left: 1, 0.1, 0.01, 0.001.'},
   s4a:{prompt:'A 7 moves from the <b>tenths</b> place to the <b>hundredths</b> place. What happens to its value?', options:[
-    {t:'It becomes 10 times as much.', why:'Moving to the <b>right</b> makes a digit worth less. Try it above.'},
-    {t:'It becomes '+TENTH+' as much.', ok:1},
-    {t:'It stays the same.', why:'The digit is the same, but its place changed. Try it above.'}],
+    {t:'It becomes 10 times as much.',why:'Moving to the <b>right</b> makes a digit worth less. Try it with the blue digit.'},
+    {t:'It becomes '+TENTH+' as much.',ok:1},
+    {t:'It stays the same.',why:'The digit is the same, but its place changed. Try it with the blue digit.'}],
     explain:'0.7 → 0.07. One place right means divide by 10.'},
   s4b:{inline:1, prompt:'A 3 moves from the <b>hundredths</b> place to the <b>tenths</b> place. 0.03 becomes…', options:[
-    {t:'0.3', ok:1},
-    {t:'0.003', why:'That is one place to the <b>right</b>. This 3 moved left.'},
-    {t:'3', why:'That is two places left. This 3 moved only one place.'}],
+    {t:'0.3',ok:1},{t:'0.003',why:'That is one place to the <b>right</b>. This 3 moved left.'},{t:'3',why:'That is two places left. This 3 moved only one place.'}],
     explain:'One place left means 10 times as much: 0.03 × 10 = 0.3.'},
   s5a:{inline:1, prompt:'0.6 is '+B+' 0.06.', options:[
-    {t:'10 times', ok:1},
-    {t:TENTH+' of', why:'Look at the grids. 0.6 has much more shaded, so it is the bigger amount.'}],
+    {t:'10 times',ok:1},{t:TENTH+' of',why:'Look at the grids. 0.6 has much more shaded, so it is the bigger amount.'}],
     explain:'6 tenths is 10 times as much as 6 hundredths.'},
   s5b:{inline:1, prompt:'0.06 is '+B+' 0.6.', options:[
-    {t:'10 times', why:'0.06 is the smaller amount. Look at the grids.'},
-    {t:TENTH+' of', ok:1}],
+    {t:'10 times',why:'0.06 is the smaller amount. Look at the grids.'},{t:TENTH+' of',ok:1}],
     explain:'6 hundredths is '+TENTH+' of 6 tenths.'},
   s6a:{letters:1, prompt:'Tap the true statement.', options:[
-    {t:'0.004 is 10 times 0.04', why:'0.004 is smaller than 0.04. It is '+TENTH+' of 0.04.'},
-    {t:'0.04 is '+TENTH+' of 0.4', ok:1},
-    {t:'4 is 10 times 0.04', why:'From hundredths to ones is two places, so 4 is 100 times 0.04.'},
-    {t:'0.4 is '+TENTH+' of 0.04', why:'0.4 is bigger than 0.04. It is 10 times 0.04.'}],
+    {t:'0.004 is 10 times 0.04',why:'0.004 is smaller than 0.04. It is '+TENTH+' of 0.04.'},
+    {t:'0.04 is '+TENTH+' of 0.4',ok:1},
+    {t:'4 is 10 times 0.04',why:'From hundredths to ones is two places, so 4 is 100 times 0.04.'},
+    {t:'0.4 is '+TENTH+' of 0.04',why:'0.4 is bigger than 0.04. It is 10 times 0.04.'}],
     explain:'0.4 ÷ 10 = 0.04, so 0.04 is '+TENTH+' of 0.4.'},
   s6b:{letters:1, prompt:'Tap the true statement.', options:[
-    {t:'0.07 is '+TENTH+' of 0.007', why:'0.07 is bigger than 0.007. It is 10 times 0.007.'},
-    {t:'7 is 10 times 0.7', ok:1},
-    {t:'0.7 is 10 times 0.007', why:'From thousandths to tenths is two places, so 0.7 is 100 times 0.007.'},
-    {t:'70 is '+TENTH+' of 7', why:'70 is bigger than 7. It is 10 times 7.'}],
+    {t:'0.07 is '+TENTH+' of 0.007',why:'0.07 is bigger than 0.007. It is 10 times 0.007.'},
+    {t:'7 is 10 times 0.7',ok:1},
+    {t:'0.7 is 10 times 0.007',why:'From thousandths to tenths is two places, so 0.7 is 100 times 0.007.'},
+    {t:'70 is '+TENTH+' of 7',why:'70 is bigger than 7. It is 10 times 7.'}],
     explain:'0.7 × 10 = 7, so 7 is 10 times 0.7.'},
   s7a:{inline:1, prompt:'Mariam has '+B+' the money Omar has.', options:[
-    {t:'10 times', ok:1},
-    {t:TENTH+' of', why:'Mariam has AED 5.00 and Omar has AED 0.50. Who has more?'}],
+    {t:'10 times',ok:1},{t:TENTH+' of',why:'Mariam has AED 5.00 and Omar has AED 0.50. Who has more?'}],
     explain:'AED 5.00 is 10 times AED 0.50.'},
   s7b:{inline:1, prompt:'Lina has '+B+' the money Omar has.', options:[
-    {t:'10 times', why:'Lina has AED 0.05. That is less than Omar’s AED 0.50.'},
-    {t:TENTH+' of', ok:1}],
+    {t:'10 times',why:'Lina has AED 0.05. That is less than Omar’s AED 0.50.'},{t:TENTH+' of',ok:1}],
     explain:'AED 0.05 is '+TENTH+' of AED 0.50.'},
   s7c:{type:'num', prompt:'AED {input} is 10 times AED 0.70.', answer:7, show:'7.00',
     hint:'10 times as much: move each digit one place to the <b>left</b>.', explain:'0.70 × 10 = 7.00'},
   s7d:{type:'num', prompt:'AED {input} is '+TENTH+' of AED 7.00.', answer:0.7, show:'0.70',
     hint:TENTH+' as much: move each digit one place to the <b>right</b>.', explain:'7.00 ÷ 10 = 0.70'},
-  s8a:{inline:1, prompt:'What is the value of the <span class="hl blue">blue 7</span>?', options:[
-    {t:'7', why:'Count the places after the decimal point: tenths, hundredths, thousandths.'},
-    {t:'0.7', why:'The blue 7 is the <b>second</b> digit after the point.'},
-    {t:'0.07', ok:1},
-    {t:'0.007', why:'The blue 7 is the <b>second</b> digit after the point.'}],
+  s8a:{inline:1, prompt:'What is the value of the <span class="tag blue">blue 7</span>?', options:[
+    {t:'7',why:'Point at the blue 7 to see its place.'},{t:'0.7',why:'The blue 7 is the <b>second</b> digit after the point.'},{t:'0.07',ok:1},{t:'0.007',why:'The blue 7 is the <b>second</b> digit after the point.'}],
     explain:'The blue 7 is in the hundredths place: 0.07.'},
-  s8b:{inline:1, prompt:'What is the value of the <span class="hl orange">orange 7</span>?', options:[
-    {t:'7', why:'The orange 7 is the <b>third</b> digit after the point.'},
-    {t:'0.7', why:'The orange 7 is the <b>third</b> digit after the point.'},
-    {t:'0.07', why:'The orange 7 is the <b>third</b> digit after the point.'},
-    {t:'0.007', ok:1}],
+  s8b:{inline:1, prompt:'What is the value of the <span class="tag orange">orange 7</span>?', options:[
+    {t:'7',why:'The orange 7 is the <b>third</b> digit after the point.'},{t:'0.7',why:'The orange 7 is the <b>third</b> digit after the point.'},{t:'0.07',why:'The orange 7 is the <b>third</b> digit after the point.'},{t:'0.007',ok:1}],
     explain:'The orange 7 is in the thousandths place: 0.007.'},
-  s8c:{inline:1, prompt:'The <span class="hl blue">blue 7</span> is '+B+' the <span class="hl orange">orange 7</span>.', options:[
-    {t:'10 times', ok:1},
-    {t:TENTH+' of', why:'The blue 7 (0.07) is bigger than the orange 7 (0.007).'},
-    {t:'100 times', why:'They are next to each other: only one place apart.'}],
+  s8c:{inline:1, prompt:'The <span class="tag blue">blue 7</span> is '+B+' the <span class="tag orange">orange 7</span>.', options:[
+    {t:'10 times',ok:1},{t:TENTH+' of',why:'The blue 7 (0.07) is bigger than the orange 7 (0.007).'},{t:'100 times',why:'They are next to each other: only one place apart.'}],
     explain:'0.07 is 10 times 0.007.'},
-  s8d:{inline:1, prompt:'What is the value of the <span class="hl blue">blue 4</span>?', options:[
-    {t:'40', why:'The blue 4 is just <b>before</b> the decimal point: the ones place.'},
-    {t:'4', ok:1},
-    {t:'0.4', why:'The blue 4 is <b>before</b> the decimal point.'},
-    {t:'0.04', why:'The blue 4 is <b>before</b> the decimal point.'}],
+  s8d:{inline:1, prompt:'What is the value of the <span class="tag blue">blue 4</span>?', options:[
+    {t:'40',why:'The blue 4 is just <b>before</b> the decimal point: the ones place.'},{t:'4',ok:1},{t:'0.4',why:'The blue 4 is <b>before</b> the decimal point.'},{t:'0.04',why:'The blue 4 is <b>before</b> the decimal point.'}],
     explain:'The blue 4 is in the ones place: 4.'},
-  s8e:{inline:1, prompt:'What is the value of the <span class="hl orange">orange 4</span>?', options:[
-    {t:'4', why:'The orange 4 is the <b>first</b> digit after the point.'},
-    {t:'0.4', ok:1},
-    {t:'0.04', why:'The orange 4 is the <b>first</b> digit after the point.'},
-    {t:'0.004', why:'The orange 4 is the <b>first</b> digit after the point.'}],
+  s8e:{inline:1, prompt:'What is the value of the <span class="tag orange">orange 4</span>?', options:[
+    {t:'4',why:'The orange 4 is the <b>first</b> digit after the point.'},{t:'0.4',ok:1},{t:'0.04',why:'The orange 4 is the <b>first</b> digit after the point.'},{t:'0.004',why:'The orange 4 is the <b>first</b> digit after the point.'}],
     explain:'The orange 4 is in the tenths place: 0.4.'},
-  s8f:{inline:1, prompt:'The <span class="hl orange">orange 4</span> is '+B+' the <span class="hl blue">blue 4</span>.', options:[
-    {t:'10 times', why:'The orange 4 (0.4) is smaller than the blue 4 (4).'},
-    {t:TENTH+' of', ok:1},
-    {t:'100 times', why:'They are only one place apart, and the orange 4 is smaller.'}],
+  s8f:{inline:1, prompt:'The <span class="tag orange">orange 4</span> is '+B+' the <span class="tag blue">blue 4</span>.', options:[
+    {t:'10 times',why:'The orange 4 (0.4) is smaller than the blue 4 (4).'},{t:TENTH+' of',ok:1},{t:'100 times',why:'They are only one place apart, and the orange 4 is smaller.'}],
     explain:'0.4 is '+TENTH+' of 4.'},
   s9a:{inline:1, prompt:'Is Rami right?', options:[
-    {t:'Yes', why:'Find the value of each 4 first. The blue 4 is 40 and the orange 4 is 0.4. Is 40 ten times 0.4?'},
-    {t:'No', ok:1}],
+    {t:'Yes',why:'Find the value of each 4 first. The blue 4 is 40 and the orange 4 is 0.4. Is 40 ten times 0.4?'},{t:'No',ok:1}],
     explain:'10 times 0.4 is only 4, but the blue 4 is worth 40.'},
   s9b:{inline:1, prompt:'The 4 in the tens place is '+B+' the 4 in the tenths place.', options:[
-    {t:'10 times', why:'10 × 0.4 = 4, not 40.'},
-    {t:'100 times', ok:1},
-    {t:'1,000 times', why:'1,000 × 0.4 = 400. That is too big.'}],
+    {t:'10 times',why:'10 × 0.4 = 4, not 40.'},{t:'100 times',ok:1},{t:'1,000 times',why:'1,000 × 0.4 = 400. That is too big.'}],
     explain:'40 is 100 times 0.4.'},
   s10:{type:'multi', prompt:'In which numbers is the digit 6 worth <b>10 times</b> the 6 in <b>3.462</b>?', options:[
-    {t:'2.615', ok:1}, {t:'6.243'}, {t:'1.356'}, {t:'9.68', ok:1}, {t:'0.564'}],
+    {t:'2.615',ok:1},{t:'6.243'},{t:'1.356'},{t:'9.68',ok:1},{t:'0.564'}],
     hint:'Step 1: the 6 in 3.462 is in the hundredths place, so it is worth 0.06. Step 2: 10 times 0.06 is 0.6. Step 3: find every number with a 6 in the <b>tenths</b> place.',
     explain:'In 2.615 and 9.68 the 6 is in the tenths place (0.6), and 0.6 is 10 times 0.06.'},
   s11a:{inline:1, prompt:'The 2 in the <b>ones</b> place is '+B+' the 2 in the <b>tenths</b> place.', options:[
-    {t:'10 times', ok:1},
-    {t:TENTH+' of', why:'The ones 2 (worth 2) is bigger than the tenths 2 (worth 0.2).'},
-    {t:'100 times', why:'Ones and tenths are next to each other: one place apart.'}],
+    {t:'10 times',ok:1},{t:TENTH+' of',why:'The ones 2 (worth 2) is bigger than the tenths 2 (worth 0.2).'},{t:'100 times',why:'Ones and tenths are next to each other: one place apart.'}],
     explain:'2 is 10 times 0.2.'},
   s11b:{inline:1, prompt:'The 2 in the <b>tens</b> place is '+B+' the 2 in the <b>tenths</b> place.', options:[
-    {t:'10 times', why:'10 × 0.2 = 2. But the tens 2 is worth 20.'},
-    {t:'100 times', ok:1},
-    {t:'1,000 times', why:'1,000 × 0.2 = 200. That is too big.'}],
+    {t:'10 times',why:'10 × 0.2 = 2. But the tens 2 is worth 20.'},{t:'100 times',ok:1},{t:'1,000 times',why:'1,000 × 0.2 = 200. That is too big.'}],
     explain:'20 is 100 times 0.2. Tens to tenths is two places: 10 × 10 = 100.'}
 };
 
 /* ---------- renderers ---------- */
-function renderChoice(el, id, q){
-  el.innerHTML = '<p class="prompt">'+q.prompt+'</p><div class="opts'+(q.inline?' inline':'')+'"></div><div class="fb" aria-live="polite"></div>';
-  var box=$('.opts',el), f=$('.fb',el);
-  sizeOpts(box, q.options.length);
-  var btns = q.options.map(function(o,i){
+function sizeOpts(box,n){ box.style.setProperty('--n',n); box.classList.add('n'+n); }
+function renderChoice(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt+'</p><div class="opts'+(q.inline?' inline':'')+'"></div><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el); sizeOpts(box,q.options.length);
+  var btns=q.options.map(function(o,i){
     var b=document.createElement('button'); b.type='button'; b.className='opt';
-    b.innerHTML = (q.letters?'<span class="letter">'+'ABCDE'.charAt(i)+'</span>':'')+'<span>'+o.t+'</span>';
+    b.innerHTML=(q.letters?'<span class="letter">'+'ABCDE'.charAt(i)+'</span>':'')+'<span>'+o.t+'</span>';
     b.addEventListener('click', function(){
       if (solved(id)) return;
-      record(id, !!o.ok);
-      if (o.ok) done();
-      else { b.classList.add('wrong'); b.disabled=true; fb(f,false,'Not quite. '+(o.why||'Try again.')); }
+      record(id,!!o.ok);
+      if (o.ok){ done(); react(true,item(id).first,b); }
+      else { b.classList.add('wrong'); b.disabled=true; fb(f,false,'Not quite. '+(o.why||'Try again.')); react(false); }
     });
     box.appendChild(b); return b;
   });
   function done(){
     btns.forEach(function(b,i){ b.disabled=true; if (q.options[i].ok) b.classList.add('correct'); });
-    var bl=$('.blank',el), c=q.options.filter(function(o){return o.ok;})[0];
+    var bl=$('.blank',el), c=q.options.filter(function(o){ return o.ok; })[0];
     if (bl){ bl.innerHTML=c.t; bl.classList.add('filled'); }
     fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+(q.explain||''));
     updateReveals();
   }
   if (solved(id)) done();
 }
-function renderMulti(el, id, q){
-  el.innerHTML = '<p class="prompt">'+q.prompt+'</p><p class="muted small">Tap every number that fits, then press Check.</p><div class="opts inline"></div><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
-  var box=$('.opts',el), f=$('.fb',el), chk=$('.check',el), sel={};
-  sizeOpts(box, q.options.length);
-  var btns = q.options.map(function(o,i){
-    var b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=o.t;
-    b.setAttribute('aria-pressed','false');
+function renderMulti(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt+'</p><p class="muted small">Choose every number that fits, then press Check.</p><div class="opts inline"></div><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el), chk=$('.check',el), sel={}; sizeOpts(box,q.options.length);
+  var btns=q.options.map(function(o,i){
+    var b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=o.t; b.setAttribute('aria-pressed','false');
     b.addEventListener('click', function(){ if (solved(id)) return; sel[i]=!sel[i]; b.classList.toggle('sel',sel[i]); b.setAttribute('aria-pressed',String(!!sel[i])); });
     box.appendChild(b); return b;
   });
   chk.addEventListener('click', function(){
     if (solved(id)) return;
-    var any=q.options.some(function(o,i){return sel[i];});
-    if (!any){ fb(f,false,'Pick at least one number first.'); return; }
+    if (!q.options.some(function(o,i){ return sel[i]; })){ fb(f,false,'Pick at least one number first.'); return; }
     var ok=q.options.every(function(o,i){ return !!o.ok===!!sel[i]; });
-    record(id, ok);
-    if (ok) done(); else fb(f,false,'Not quite. '+q.hint);
+    record(id,ok);
+    if (ok){ done(); react(true,item(id).first,chk); } else { fb(f,false,'Not quite. '+q.hint); react(false); }
   });
   function done(){
     btns.forEach(function(b,i){ b.disabled=true; b.classList.remove('sel'); if (q.options[i].ok) b.classList.add('correct'); });
-    chk.hidden=true;
-    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain);
-    updateReveals();
+    chk.hidden=true; fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain); updateReveals();
   }
   if (solved(id)) done();
 }
-function renderNum(el, id, q){
-  el.innerHTML = '<p class="prompt">'+q.prompt.replace('{input}','<input class="num" type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer">')+'</p><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+function renderNum(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt.replace('{input}','<input class="num" type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer">')+'</p><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
   var inp=$('input',el), f=$('.fb',el), chk=$('.check',el);
   function check(){
     if (solved(id)) return;
@@ -673,48 +836,35 @@ function renderNum(el, id, q){
     if (!raw){ fb(f,false,'Type a number first.'); return; }
     var v=parseFloat(raw.replace(/[^0-9.]/g,''));
     if (isNaN(v)){ fb(f,false,'Type a number, like 3.5'); return; }
-    var ok=Math.abs(v-q.answer)<1e-9;
-    record(id, ok);
-    if (ok) done(); else fb(f,false,'Not quite. '+q.hint);
+    var ok=Math.abs(v-q.answer)<1e-9; record(id,ok);
+    if (ok){ done(); react(true,item(id).first,inp); } else { fb(f,false,'Not quite. '+q.hint); react(false); }
   }
-  chk.addEventListener('click', check);
+  chk.addEventListener('click',check);
   inp.addEventListener('keydown', function(e){ if (e.key==='Enter') check(); });
-  function done(){
-    inp.value=q.show; inp.disabled=true; inp.classList.add('ok'); chk.hidden=true;
-    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain);
-    updateReveals();
-  }
+  function done(){ inp.value=q.show; inp.disabled=true; inp.classList.add('ok'); chk.hidden=true; fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain); updateReveals(); }
   if (solved(id)) done();
 }
 
-/* ---------- screen 1: models ---------- */
-function setupModels(){
-  $$('.model').forEach(function(b){
-    b.insertAdjacentHTML('afterbegin', squareSVG(b.getAttribute('data-svg')));
-    b.addEventListener('click', function(){ b.classList.add('open'); $('.mlabel',b).hidden=false; $('.tapme',b).hidden=true; });
-  });
-}
-
-/* ---------- screen 2: grid explorer ---------- */
+/* ---------- page 2: drag-to-shade grid ---------- */
 function setupGrid(){
-  var g=$('#grid100'), cells=[], tool='tenth', r, c;
-  for (r=0;r<10;r++) for (c=0;c<10;c++){
-    var b=document.createElement('button'); b.type='button'; b.setAttribute('data-c',c);
-    b.setAttribute('aria-label','Row '+(r+1)+', column '+(c+1));
-    g.appendChild(b); cells.push(b);
-  }
-  $$('[data-tool]').forEach(function(t){ t.addEventListener('click', function(){
-    tool=t.getAttribute('data-tool'); $$('[data-tool]').forEach(function(x){ x.classList.toggle('on', x===t); });
-  }); });
-  g.addEventListener('click', function(e){
-    var b=e.target.closest('button'); if (!b) return;
-    if (tool==='tenth'){
-      var col=cells.filter(function(x){ return x.getAttribute('data-c')===b.getAttribute('data-c'); });
-      var all=col.every(function(x){ return x.classList.contains('on'); });
-      col.forEach(function(x){ x.classList.toggle('on', !all); });
-    } else b.classList.toggle('on');
-    update();
+  var g=$('#grid100'), cells=[], tool='tenth', r, c, painting=false, paintVal=true, last=null;
+  for (r=0;r<10;r++) for (c=0;c<10;c++){ var d=document.createElement('div'); d.className='cell'; d.setAttribute('data-c',c); g.appendChild(d); cells.push(d); }
+  $$('[data-tool]').forEach(function(t){ t.addEventListener('click', function(){ tool=t.getAttribute('data-tool'); $$('[data-tool]').forEach(function(x){ x.classList.toggle('on',x===t); }); }); });
+  function col(cell){ var cc=cell.getAttribute('data-c'); return cells.filter(function(x){ return x.getAttribute('data-c')===cc; }); }
+  function group(cell){ return tool==='tenth' ? col(cell) : [cell]; }
+  function cellAt(e){ var el=document.elementFromPoint(e.clientX,e.clientY); return el && el.classList && el.classList.contains('cell') && el.parentNode===g ? el : null; }
+  function preview(cell){ cells.forEach(function(x){ x.classList.remove('pre'); }); if (cell) group(cell).forEach(function(x){ x.classList.add('pre'); }); }
+  function apply(cell){ if (cell===last) return; last=cell; group(cell).forEach(function(x){ x.classList.toggle('on',paintVal); }); update(); }
+  g.addEventListener('pointerdown', function(e){
+    var cell=e.target.closest('.cell'); if (!cell) return;
+    e.preventDefault(); capture(g,e); painting=true; last=null;
+    var grp=group(cell); paintVal=!grp.every(function(x){ return x.classList.contains('on'); });
+    apply(cell);
   });
+  g.addEventListener('pointermove', function(e){ var cell=cellAt(e); preview(cell); if (painting && cell) apply(cell); });
+  function stop(){ painting=false; last=null; }
+  g.addEventListener('pointerup', stop); g.addEventListener('pointercancel', stop);
+  g.addEventListener('pointerleave', function(){ preview(null); });
   function count(){ return cells.filter(function(x){ return x.classList.contains('on'); }).length; }
   function clear(){ cells.forEach(function(x){ x.classList.remove('on'); }); update(); }
   $('#gridClear').addEventListener('click', clear);
@@ -722,217 +872,376 @@ function setupGrid(){
     var n=count(), out;
     if (n===100) out='100 hundredths = <b>1 whole</b>';
     else if (n===0) out='Nothing shaded yet: <b>0</b>';
-    else out='<b>'+n+'</b> hundredth'+(n===1?'':'s')+' = <b>'+(n/100)+'</b>'+(n%10===0?' = '+(n/10)+' tenth'+(n===10?'':'s'):'');
+    else out='<b>'+n+'</b> hundredth'+(n===1?'':'s')+' = <b class="bigval">'+(n/100)+'</b>'+(n%10===0?' = '+(n/10)+' tenth'+(n===10?'':'s'):'');
     $('#gridRead').innerHTML=out;
   }
   var TASKS=[
     {id:'g1', target:30, label:'0.3', hint:'0.3 means 3 tenths. Choose the <b>Tenth</b> tool and shade 3 columns.', explain:'3 tenths = 30 hundredths = 0.3'},
-    {id:'g2', target:3,  label:'0.03', hint:'0.03 means 3 hundredths: only 3 small squares. Choose the <b>Hundredth</b> tool.', explain:'3 hundredths = 0.03'}
+    {id:'g2', target:3, label:'0.03', hint:'0.03 means 3 hundredths: only 3 small squares. Choose the <b>Hundredth</b> tool.', explain:'3 hundredths = 0.03'}
   ];
   var box=$('#gridTask');
   TASKS.forEach(function(t){ reg(t.id, box); });
   function showTask(){
     var t=TASKS.filter(function(x){ return !solved(x.id); })[0];
-    if (!t){ box.innerHTML='<p class="prompt">Both tasks done ✓</p><p class="muted">Look at the two grids below.</p>'; updateReveals(); return; }
+    if (!t){ box.innerHTML='<p class="prompt">Both tasks done ✓</p><p class="muted" style="margin:0">Compare the two grids below. Point at them!</p>'; updateReveals(); return; }
     var k=TASKS.indexOf(t)+1;
     box.innerHTML='<p class="prompt">Task '+k+' of 2: Shade <span class="bigval">'+t.label+'</span></p><button type="button" class="btn small check">Check my grid</button><div class="fb" aria-live="polite"></div>';
-    var f=$('.fb',box);
-    $('.check',box).addEventListener('click', function(){
-      var n=count(), ok=n===t.target;
-      record(t.id, ok);
-      if (!ok){ fb(f,false,'You shaded '+(n/100)+'. '+t.hint); return; }
-      fb(f,true,(item(t.id).first?'Correct! ':'Yes, that’s it. ')+t.explain+(k<2?' <button type="button" class="btn small" id="gridNext" style="margin-left:8px">Next task</button>':''));
-      $('.check',box).hidden=true;
-      updateReveals();
-      var nx=$('#gridNext'); if (nx) nx.addEventListener('click', function(){ clear(); showTask(); });
-      if (k===2) { box.insertAdjacentHTML('beforeend','<p class="muted small" style="margin-top:8px">Both tasks done ✓ Look at the two grids below.</p>'); }
+    var f=$('.fb',box), chk=$('.check',box);
+    chk.addEventListener('click', function(){
+      var n=count(), ok=n===t.target; record(t.id,ok);
+      if (!ok){ fb(f,false,'You shaded '+(n/100)+'. '+t.hint); react(false); return; }
+      react(true,item(t.id).first,chk); chk.hidden=true; updateReveals();
+      fb(f,true,(item(t.id).first?'Correct! ':'Yes, that’s it. ')+t.explain);
+      if (k<2){ var nx=document.createElement('button'); nx.type='button'; nx.className='btn small'; nx.style.marginTop='10px'; nx.textContent='Next task ▶'; nx.addEventListener('click', function(){ clear(); showTask(); }); box.appendChild(nx); }
+      else box.insertAdjacentHTML('beforeend','<p class="muted small" style="margin:8px 0 0">Both tasks done ✓ Compare the two grids below.</p>');
     });
   }
   update(); showTask();
 }
 
-/* ---------- screen 3: digit detective ---------- */
-function setupDetective(){
-  var ps=[0,-1,-2,-3], seen={};
-  $('#ddChart').innerHTML = pvChart(ps, function(p){
-    return {html:'<button type="button" class="digit" data-p="'+p+'" style="color:'+placeOf(p).color+'" aria-label="The 1 in the '+placeOf(p).name+' place"><span>1</span></button>'};
-  });
-  $$('#ddChart .digit').forEach(function(b){
-    b.addEventListener('click', function(){
-      var p=+b.getAttribute('data-p'), pl=placeOf(p);
-      seen[p]=1; b.classList.add('seen');
-      var value = p===0 ? '<b>1</b>' : frac(1,denom(p))+' or <b>'+valStr(1,p)+'</b>';
-      var size = p===0 ? 'a big cube' : p===-1 ? 'a flat: '+TENTH+' of the cube' : p===-2 ? 'a rod: '+TENTH+' of the flat' : 'a tiny cube: '+TENTH+' of the rod';
-      $('#ddInfo').innerHTML='<div class="blk">'+blockSVG(p, 7)+'<div>This 1 is in the <b style="color:'+pl.color+'">'+pl.name+'</b> place.<br>It is worth '+value+'.<br><span class="muted small">Model: '+size+'.</span></div></div>';
-      if (Object.keys(seen).length===4) setFlag('flag:dd');
-    });
-  });
-  var row='';
-  ps.forEach(function(p,i){
-    if (i) row+='<span class="arrow">÷10 →</span>';
-    row+='<figure>'+blockSVG(p,5)+'<figcaption><b>'+valStr(1,p)+'</b></figcaption></figure>';
-  });
-  $('#ddRow').innerHTML=row;
+/* ---------- page 3: 3D base-ten blocks that follow the mouse ---------- */
+function shade(hex,f){
+  var n=parseInt(hex.slice(1),16), rgb=[n>>16,n>>8&255,n&255];
+  return '#'+rgb.map(function(v){ v=Math.round(f>0 ? v+(255-v)*f : v*(1+f)); v=Math.max(0,Math.min(255,v)); return ('0'+v.toString(16)).slice(-2); }).join('');
 }
-
-/* ---------- screen 4: slider ---------- */
-function setupSlider(){
-  var d=7, p=-1, ps=[2,1,0,-1,-2,-3];
+var LIGHT=(function(){ var v=[-0.35,0.8,0.5], m=Math.hypot(v[0],v[1],v[2]); return [v[0]/m,v[1]/m,v[2]/m]; })();
+function boxSVG(dims,cx,cy,S,yaw,pitch,color,off){
+  var h=[dims[0]/2,dims[1]/2,dims[2]/2], cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch), o=off||[0,0,0];
+  function rot(v){ var x=v[0]*cyw+v[2]*syw, z=-v[0]*syw+v[2]*cyw, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
+  function P(v){ var r=rot([v[0]+o[0],v[1]+o[1],v[2]+o[2]]); return [(cx+r[0]*S).toFixed(1), (cy-r[1]*S).toFixed(1)]; }
+  var faces=[], a, sg;
+  for (a=0;a<3;a++) for (sg=-1;sg<=1;sg+=2){
+    var nrm=[0,0,0]; nrm[a]=sg; var rn=rot(nrm); if (rn[2]<=0.001) continue;
+    var b=(a+1)%3, c=(a+2)%3;
+    var pt=(function(a,b,c,sg){ return function(u,v){ var q=[0,0,0]; q[a]=sg*h[a]; q[b]=u; q[c]=v; return q; }; })(a,b,c,sg);
+    var corners=[pt(-h[b],-h[c]),pt(h[b],-h[c]),pt(h[b],h[c]),pt(-h[b],h[c])], lines=[], k;
+    for (k=1;k<dims[b];k++) lines.push([pt(-h[b]+k,-h[c]),pt(-h[b]+k,h[c])]);
+    for (k=1;k<dims[c];k++) lines.push([pt(-h[b],-h[c]+k),pt(h[b],-h[c]+k)]);
+    var light=Math.max(0,rn[0]*LIGHT[0]+rn[1]*LIGHT[1]+rn[2]*LIGHT[2]);
+    faces.push({z:rn[2]*h[a], corners:corners, lines:lines, light:light});
+  }
+  faces.sort(function(x,y){ return x.z-y.z; });
+  var s='';
+  faces.forEach(function(f){
+    s+='<polygon points="'+f.corners.map(function(v){ return P(v).join(','); }).join(' ')+'" fill="'+shade(color,(f.light-0.55)*0.9)+'" stroke="'+COL.ink+'" stroke-width="1.2" stroke-linejoin="round"/>';
+    f.lines.forEach(function(l){ var p=P(l[0]), q=P(l[1]); s+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(27,42,58,.32)" stroke-width=".6"/>'; });
+  });
+  return s;
+}
+function setupStage(){
+  var svg=$('#stage'), W=640, FLOOR=214, S=12;
+  // each block floats above the page and casts a shadow on it; the big cube rises out of the frame
+  var SL=[
+    {p:0, dims:[10,10,10], x:112, cy:70,  rx:88, ry:16, kind:'a big cube'},
+    {p:-1,dims:[10,1,10],  x:302, cy:118, rx:86, ry:16, kind:'a flat: '+TENTH+' of the cube'},
+    {p:-2,dims:[10,1,1],   x:464, cy:134, rx:60, ry:9,  kind:'a rod: '+TENTH+' of the flat'},
+    {p:-3,dims:[1,1,1],    x:582, cy:140, rx:11, ry:4,  kind:'a tiny cube: '+TENTH+' of the rod'}];
+  var Y0=-0.62, P0=0.42, yaw=Y0, pitch=P0, tYaw=Y0, tPitch=P0, hi=null, chosen=null, raf=0, seen={};
+  var s='<defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#f2b705" flood-opacity="1"/></filter>'+
+        '<radialGradient id="shGrad"><stop offset="0" stop-color="#0e2a44" stop-opacity=".45"/><stop offset="1" stop-color="#0e2a44" stop-opacity="0"/></radialGradient></defs>';
+  SL.forEach(function(b,i){ s+='<ellipse class="shadow" style="animation-delay:-'+(i*0.8)+'s" cx="'+b.x+'" cy="'+FLOOR+'" rx="'+b.rx+'" ry="'+b.ry+'" fill="url(#shGrad)"/>'; });
+  SL.forEach(function(b,i){ s+='<g class="bob" style="animation-delay:-'+(i*0.8)+'s"><g class="blk" style="animation-delay:'+(0.3+i*0.15)+'s"></g></g>'; });
+  s+='<g class="lbls"></g><g class="lens"></g>';
+  svg.innerHTML=s;
+  var blks=$$('.blk',svg), lbls=$('.lbls',svg), lens=$('.lens',svg);
   function draw(){
-    $('#slChart').innerHTML = pvChart(ps, function(q){
-      if (q===p) return {html:String(d), cls:'hot'};
-      if ((p<0 && q<=0 && q>p) || (p>0 && q>=0 && q<p)) return {html:'0', cls:'ph'};
-      return {html:''};
+    var t='';
+    SL.forEach(function(b,i){
+      var g=blks[i], dim=hi!==null && hi!==i;
+      g.innerHTML=boxSVG(b.dims,b.x,b.cy,S,yaw,pitch,placeOf(b.p).color);
+      g.setAttribute('opacity', dim?0.28:1);
+      if (hi===i) g.setAttribute('filter','url(#glow)'); else g.removeAttribute('filter');
+      g.classList.toggle('lift', hi===i);
+      t+='<text x="'+b.x+'" y="248" text-anchor="middle" font-size="22" font-weight="800" fill="'+placeOf(b.p).color+'" opacity="'+(dim?0.4:1)+'">'+valStr(1,b.p)+'</text>';
+      t+='<text x="'+b.x+'" y="268" text-anchor="middle" font-size="14" font-weight="600" fill="#566676" opacity="'+(dim?0.4:1)+'">'+placeOf(b.p).name+'</text>';
     });
-    $('#slVal').innerHTML = 'The '+d+' is in the <b style="color:'+placeOf(p).color+'">'+placeOf(p).name+'</b> place. Value: <span class="bigval">'+valStr(d,p)+'</span>'+(p<0?' = '+frac(d,denom(p)):'');
-    $('#slLeft').disabled = p>=2; $('#slRight').disabled = p<=-3;
+    lbls.innerHTML=t;
+    lens.innerHTML='<line x1="582" y1="126" x2="582" y2="80" stroke="#8e44ad" stroke-dasharray="3 3"/><circle cx="582" cy="42" r="36" fill="#fff" stroke="#8e44ad" stroke-width="2.5"/>'+
+      boxSVG([1,1,1],582,42,S*3,yaw,pitch,COL.thou)+'<text x="582" y="-2" text-anchor="middle" font-size="12" font-weight="700" fill="#8e44ad">zoomed in</text>';
   }
-  function move(step){
-    var old=p; p+=step; draw();
-    $('#slMsg').innerHTML = step>0
-      ? valStr(d,old)+' → <b>'+valStr(d,p)+'</b>. One place <b>left</b>, so it is worth <b>10 times</b> as much.'
-      : valStr(d,old)+' → <b>'+valStr(d,p)+'</b>. One place <b>right</b>, so it is worth <b>'+TENTH+'</b> as much.';
+  function tick(){
+    yaw+=(tYaw-yaw)*0.16; pitch+=(tPitch-pitch)*0.16; draw();
+    raf = (Math.abs(tYaw-yaw)>0.002 || Math.abs(tPitch-pitch)>0.002) ? requestAnimationFrame(tick) : 0;
   }
-  $('#slLeft').addEventListener('click', function(){ move(1); });
-  $('#slRight').addEventListener('click', function(){ move(-1); });
-  $('#slDigit').addEventListener('click', function(){ d = d%9+1; draw(); $('#slMsg').innerHTML='New digit: <b>'+d+'</b>. Move it left and right.'; });
+  function kick(){ if (!raf) raf=requestAnimationFrame(tick); }
+  function setHi(i){
+    hi=i; draw();
+    $$('#ddChart .digit').forEach(function(d,k){ d.classList.toggle('hot', k===i); });
+    if (i===null) return;
+    var b=SL[i], pl=placeOf(b.p), value=b.p===0 ? '<b>1</b>' : frac(1,denom(b.p))+' or <b>'+valStr(1,b.p)+'</b>';
+    $('#ddInfo').innerHTML='This 1 is in the <b style="color:'+pl.color+'">'+pl.name+'</b> place. It is worth '+value+'.<br><span class="muted small">Model: '+b.kind+'.</span>';
+    if (!seen[i]){ seen[i]=1; if (Object.keys(seen).length===4) say('You found all four values: 1, 0.1, 0.01 and 0.001!','cheer'); }
+  }
+  svg.addEventListener('pointermove', function(e){
+    var r=svg.getBoundingClientRect(), px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    tYaw=Y0+(px-0.5)*1.9; tPitch=Math.max(0.05,Math.min(1.0,P0+(py-0.5)*1.0));
+    var vx=px*W, best=0; SL.forEach(function(b,i){ if (Math.abs(b.x-vx)<Math.abs(SL[best].x-vx)) best=i; });
+    if (best!==hi) setHi(best);
+    kick();
+  });
+  svg.addEventListener('pointerleave', function(){ tYaw=Y0; tPitch=P0; setHi(chosen); kick(); });
+  $('#ddChart').innerHTML=pvChart([0,-1,-2,-3], function(p){
+    return {html:'<button type="button" class="digit" style="color:'+placeOf(p).color+'" aria-label="The 1 in the '+placeOf(p).name+' place"><span>1</span></button>'};
+  });
+  $$('#ddChart .digit').forEach(function(d,i){
+    d.addEventListener('pointerenter', function(){ setHi(i); });
+    d.addEventListener('pointerleave', function(){ setHi(chosen); });
+    d.addEventListener('click', function(){ chosen=i; setHi(i); burst(d); });
+  });
   draw();
 }
 
-/* ---------- screen 12: builders ---------- */
-function setupBuilder(el, id, cfg){
-  reg(id, el);
-  el.innerHTML = '<p class="prompt">'+cfg.prompt+'</p><div class="tray" aria-label="Digit tiles"></div>'+
-    '<div class="slots"><div class="slot-wrap"><button type="button" class="slot" aria-label="ones place"></button>ones</div><div class="point">.</div>'+
-    '<div class="slot-wrap"><button type="button" class="slot" aria-label="tenths place"></button>tenths</div>'+
-    '<div class="slot-wrap"><button type="button" class="slot" aria-label="hundredths place"></button>hundredths</div></div>'+
-    '<p class="muted small center" style="margin-top:8px">Tap a tile, then tap a box. Tap a box again to take its tile back.</p>'+
+/* ---------- page 1: a 3D cube that floats out of the page; its top tenth lifts off ---------- */
+function setupHero(){
+  var svg=$('#heroSvg'), mx=0, my=0, t0=performance.now(), raf=0, last=0, on=false;
+  window.addEventListener('pointermove', function(e){ mx=e.clientX/window.innerWidth-0.5; my=e.clientY/window.innerHeight-0.5; }, {passive:true});
+  function draw(t){
+    var yaw=-0.7+t*0.3+mx*1.4, pitch=Math.max(0.15,Math.min(0.95,0.5+my*0.8)), gap=1.3+1.1*Math.sin(t*1.7), sh=-gap/2;
+    svg.innerHTML=boxSVG([10,9,10],150,150,11.5,yaw,pitch,COL.ones,[0,-0.5+sh,0])+
+                  boxSVG([10,1,10],150,150,11.5,yaw,pitch,COL.tenths,[0,4.5+gap+sh,0]);
+  }
+  function frame(now){
+    if (!on){ raf=0; return; }
+    raf=requestAnimationFrame(frame);
+    if (now-last<33) return;
+    last=now; draw((now-t0)/1000);
+  }
+  draw(0);
+  return {active:function(a){ on=!!a && !document.hidden && !CALM; if (on && !raf) raf=requestAnimationFrame(frame); }};
+}
+
+function pvChart(ps, cell){
+  var hasPoint=ps.indexOf(0)>=0 && ps.indexOf(-1)>=0, tpl=[], head='', row='';
+  ps.forEach(function(p){
+    if (p===-1 && hasPoint){ tpl.push('16px'); head+='<div class="h" style="background:#0e4a7a"></div>'; row+='<div class="d pt">.</div>'; }
+    var pl=placeOf(p), c=cell(p); tpl.push('1fr');
+    head+='<div class="h" style="background:'+pl.color+'">'+pl.label+'</div>';
+    row+='<div class="d'+(c.cls?' '+c.cls:'')+'" data-p="'+p+'">'+c.html+'</div>';
+  });
+  return '<div class="pv" style="grid-template-columns:'+tpl.join(' ')+'">'+head+row+'</div>';
+}
+
+/* ---------- page 4: drag the digit along the chart ---------- */
+function setupSlider(){
+  var ps=[2,1,0,-1,-2,-3], d=7, p=-1, wrap=$('#slWrap'), tile=$('#slTile');
+  $('#slChart').innerHTML=pvChart(ps, function(){ return {html:''}; });
+  var cellEls=ps.map(function(q){ return $('#slChart .d[data-p="'+q+'"]'); });
+  // layout offsets (not screen rects) so a page-turn animation in progress cannot shift the tile
+  function centers(){ return cellEls.map(function(c){ var x=0, y=0, el=c; while (el && el!==wrap){ x+=el.offsetLeft; y+=el.offsetTop; el=el.offsetParent; } return {x:x+c.offsetWidth/2, y:y+c.offsetHeight/2}; }); }
+  function fill(pp){ ps.forEach(function(q,i){ var z=(pp<0&&q<=0&&q>pp)||(pp>0&&q>=0&&q<pp); cellEls[i].textContent=z?'0':''; cellEls[i].classList.toggle('ph',z); cellEls[i].classList.toggle('hot',q===pp); }); }
+  function readout(pp){ $('#slVal').innerHTML='The '+d+' is in the <b style="color:'+placeOf(pp).color+'">'+placeOf(pp).name+'</b> place. Value: <span class="bigval">'+valStr(d,pp)+'</span>'+(pp<0?' = '+frac(d,denom(pp)):''); }
+  function place(anim){ var c=centers()[ps.indexOf(p)]; if (!c || !c.x) return; tile.classList.toggle('anim',!!anim); tile.style.left=c.x+'px'; tile.style.top=c.y+'px'; }
+  function refresh(anim){ tile.textContent=d; fill(p); readout(p); place(anim); $('#slLeft').disabled=p>=2; $('#slRight').disabled=p<=-3; tile.setAttribute('aria-valuetext', valStr(d,p)); }
+  function msg(from,to){
+    var k=to-from, html='';
+    if (!k){ $('#slMsg').innerHTML='Same place, same value: <b>'+valStr(d,to)+'</b>.'; return; }
+    var step=k>0?1:-1, chain='<span class="chain"><b>'+valStr(d,from)+'</b>';
+    for (var q=from+step; step>0?q<=to:q>=to; q+=step) chain+=(step>0?'<i class="up">× 10</i>':'<i class="dn">÷ 10</i>')+'<b>'+valStr(d,q)+'</b>';
+    chain+='</span>';
+    var n=Math.abs(k), times=pow10(n).toLocaleString('en-US');
+    html=chain+'<br>Moved <b>'+n+'</b> place'+(n>1?'s':'')+' '+(k>0?'left':'right')+', so it is worth <b>'+(k>0? times+' times' : frac(1,times))+'</b> as much.';
+    $('#slMsg').innerHTML=html;
+    if (n>=2) say(k>0?'Two or more places left: multiply by 10 again and again!':'Each place right divides by 10 again!');
+  }
+  function nearest(x){ var cs=centers(), best=0; cs.forEach(function(c,i){ if (Math.abs(c.x-x)<Math.abs(cs[best].x-x)) best=i; }); return best; }
+  var drag=null;
+  tile.addEventListener('pointerdown', function(e){
+    e.preventDefault(); capture(tile,e);
+    drag={from:p, cur:p}; tile.classList.add('drag'); tile.classList.remove('anim');
+  });
+  tile.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var wr=wrap.getBoundingClientRect(), cs=centers(), x=Math.max(cs[0].x, Math.min(cs[cs.length-1].x, e.clientX-wr.left));
+    tile.style.left=x+'px';
+    var q=ps[nearest(x)]; if (q!==drag.cur){ drag.cur=q; fill(q); readout(q); }
+  });
+  function end(){ if (!drag) return; tile.classList.remove('drag'); p=drag.cur; var from=drag.from; drag=null; refresh(true); msg(from,p); }
+  tile.addEventListener('pointerup', end); tile.addEventListener('pointercancel', end);
+  tile.addEventListener('keydown', function(e){
+    if (e.key==='ArrowLeft' && p<2){ p++; refresh(true); msg(p-1,p); e.preventDefault(); }
+    if (e.key==='ArrowRight' && p>-3){ p--; refresh(true); msg(p+1,p); e.preventDefault(); }
+  });
+  $('#slLeft').addEventListener('click', function(){ if (p<2){ p++; refresh(true); msg(p-1,p); } });
+  $('#slRight').addEventListener('click', function(){ if (p>-3){ p--; refresh(true); msg(p+1,p); } });
+  $('#slDigit').addEventListener('click', function(){ d=d%9+1; refresh(false); $('#slMsg').innerHTML='New digit: <b>'+d+'</b>. Drag it to another place.'; });
+  window.addEventListener('resize', function(){ place(false); });
+  refresh(false);
+  return {place:function(){ place(false); }};
+}
+
+/* ---------- big numbers: point at a digit to see its place ---------- */
+function setupBigNums(){
+  $$('[data-num]').forEach(function(el){
+    var s=el.getAttribute('data-num'), hl={}, pi=s.indexOf('.'); if (pi<0) pi=s.length;
+    (el.getAttribute('data-hl')||'').split(/\s+/).forEach(function(t){ if (t){ var a=t.split(':'); hl[+a[0]]=a[1]; } });
+    el.innerHTML=s.split('').map(function(ch,i){
+      if (ch==='.') return '.';
+      var pw = i<pi ? pi-1-i : -(i-pi), pl=placeOf(pw);
+      return '<span class="dg'+(hl[i]?' hl-'+hl[i]:'')+'" tabindex="0" data-place="'+(pl?pl.name:'')+' place">'+ch+'</span>';
+    }).join('');
+    $$('.dg',el).forEach(function(dg){ dg.addEventListener('pointerdown', function(e){ if (e.pointerType!=='mouse'){ var on=!dg.classList.contains('show'); $$('.dg.show').forEach(function(x){ x.classList.remove('show'); }); dg.classList.toggle('show',on); } }); });
+  });
+}
+
+/* ---------- page 7: drag tiles into the number boxes ---------- */
+function setupBuilder(el,id,cfg){
+  reg(id,el);
+  el.innerHTML='<p class="prompt">'+cfg.prompt+'</p><div class="tray" aria-label="Digit tiles"></div>'+
+    '<div class="slots"><div class="slot-wrap"><div class="slot" role="button" tabindex="0" aria-label="ones place"></div>ones</div><div class="point">.</div>'+
+    '<div class="slot-wrap"><div class="slot" role="button" tabindex="0" aria-label="tenths place"></div>tenths</div>'+
+    '<div class="slot-wrap"><div class="slot" role="button" tabindex="0" aria-label="hundredths place"></div>hundredths</div></div>'+
+    '<p class="muted small center bhint" style="margin-top:8px">'+(HOVER?'Drag the tiles into the boxes. Drag a tile out to take it back.':'Slide the tiles into the boxes, or tap a tile and then a box.')+'</p>'+
     '<div class="center"><button type="button" class="btn small check">Check</button></div><div class="fb" aria-live="polite"></div>';
   var slots=[null,null,null], sel=null, tray=$('.tray',el), slotEls=$$('.slot',el), f=$('.fb',el), chk=$('.check',el);
+  function put(i,k){ var from=slots.indexOf(i), other=slots[k]; if (from>=0) slots[from]=null; slots[k]=i; if (other!==null && other!==i && from>=0) slots[from]=other; }
+  function tapTile(i){
+    if (solved(id)) return;
+    var at=slots.indexOf(i);
+    if (sel!==null && at>=0 && sel!==i){ put(sel,at); sel=null; }
+    else if (sel===null && at>=0){ slots[at]=null; }
+    else sel = sel===i ? null : i;
+    draw();
+  }
+  function tapSlot(k){ if (solved(id) || sel===null) return; put(sel,k); sel=null; draw(); }
+  function slotAt(ev){ var t=document.elementFromPoint(ev.clientX,ev.clientY); t=t && t.closest ? t.closest('.slot') : null; return slotEls.indexOf(t)>=0 ? t : null; }
+  function tileEl(i){
+    var b=document.createElement('button'); b.type='button'; b.className='tile'+(sel===i?' sel':''); b.textContent=cfg.digits[i];
+    b.addEventListener('click', function(e){ if (e.detail===0) tapTile(i); });
+    b.addEventListener('pointerdown', function(e){
+      if (solved(id)) return;
+      e.preventDefault(); capture(b,e);
+      var st={x:e.clientX, y:e.clientY, moved:false, ghost:null};
+      function move(ev){
+        if (!st.moved && Math.hypot(ev.clientX-st.x, ev.clientY-st.y)>6){ st.moved=true; st.ghost=b.cloneNode(true); st.ghost.className='tile ghost'; document.body.appendChild(st.ghost); b.classList.add('lifting'); }
+        if (st.moved){ st.ghost.style.left=ev.clientX+'px'; st.ghost.style.top=ev.clientY+'px'; var t=slotAt(ev); slotEls.forEach(function(s){ s.classList.toggle('over', s===t); }); }
+      }
+      function up(ev){
+        b.removeEventListener('pointermove',move); b.removeEventListener('pointerup',up); b.removeEventListener('pointercancel',up);
+        slotEls.forEach(function(s){ s.classList.remove('over'); });
+        if (!st.moved){ tapTile(i); return; }
+        st.ghost.remove();
+        var t=slotAt(ev);
+        if (t) put(i, slotEls.indexOf(t)); else { var at=slots.indexOf(i); if (at>=0) slots[at]=null; }
+        sel=null; draw();
+      }
+      b.addEventListener('pointermove',move); b.addEventListener('pointerup',up); b.addEventListener('pointercancel',up);
+    });
+    return b;
+  }
   function draw(){
     tray.innerHTML='';
-    cfg.digits.forEach(function(dg,i){
-      if (slots.indexOf(i)>=0) return;
-      var b=document.createElement('button'); b.type='button'; b.className='tile'+(sel===i?' sel':''); b.textContent=dg;
-      b.addEventListener('click', function(){ if (solved(id)) return; sel = sel===i ? null : i; draw(); });
-      tray.appendChild(b);
-    });
-    slotEls.forEach(function(s,k){ s.textContent = slots[k]===null ? '' : cfg.digits[slots[k]]; s.classList.toggle('filled', slots[k]!==null); });
+    cfg.digits.forEach(function(dg,i){ if (slots.indexOf(i)<0) tray.appendChild(tileEl(i)); });
+    slotEls.forEach(function(s,k){ s.innerHTML=''; s.classList.toggle('filled', slots[k]!==null); if (slots[k]!==null) s.appendChild(tileEl(slots[k])); });
   }
-  slotEls.forEach(function(s,k){ s.addEventListener('click', function(){
-    if (solved(id)) return;
-    if (sel!==null){ slots[k]=sel; sel=null; } else if (slots[k]!==null) slots[k]=null;
-    draw();
-  }); });
+  slotEls.forEach(function(s,k){
+    s.addEventListener('click', function(e){ if (e.target===s) tapSlot(k); });
+    s.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); tapSlot(k); } });
+  });
   chk.addEventListener('click', function(){
     if (solved(id)) return;
     if (slots.indexOf(null)>=0){ fb(f,false,'Use all three digits: fill every box.'); return; }
     var num=slots.map(function(i){ return cfg.digits[i]; }), ok=cfg.test(num);
-    record(id, ok); if (ok){ item(id).ans=num; save(); done(); } else fb(f,false,'Not quite. '+cfg.hint);
+    record(id,ok);
+    if (ok){ item(id).ans=num; save(); done(); react(true,item(id).first,chk); } else { fb(f,false,'Not quite. '+cfg.hint); react(false); }
   });
   function done(){
-    var num=item(id).ans || [];
+    var num=item(id).ans||[];
     if (num.length===3) slots=num.map(function(dg){ return cfg.digits.indexOf(dg); });
-    sel=null; draw(); chk.hidden=true; tray.hidden=true; $('p.muted',el).hidden=true;
+    sel=null; draw(); chk.hidden=true; tray.hidden=true; $('.bhint',el).hidden=true;
+    $$('.tile',el).forEach(function(t){ t.disabled=true; t.style.cursor='default'; });
     fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+(num.length===3?'<b>'+num[0]+'.'+num[1]+num[2]+'</b> works. ':'')+cfg.explain);
   }
   draw(); if (solved(id)) done();
 }
 
-/* ---------- reflect ---------- */
-function setupReflect(){
-  var ta=$('#reflect'); ta.value=state.reflect||'';
-  ta.addEventListener('input', function(){ state.reflect=ta.value; save(); });
+/* ---------- reflect, notes, results ---------- */
+function setupWriting(){
+  var ta=$('#reflect'); ta.value=state.reflect||''; ta.addEventListener('input', function(){ state.reflect=ta.value; save(); });
+  $$('[data-note]').forEach(function(t){ var k=t.getAttribute('data-note'); t.value=state.notes[k]||''; t.addEventListener('input', function(){ state.notes[k]=t.value; save(); }); });
   var opts=['Take slow, deep breaths','Count slowly to 10','Talk to someone I trust','Take a short break','Draw or write about it','Get a drink of water'];
-  var box=$('#chips');
   opts.forEach(function(o){
     var b=document.createElement('button'); b.type='button'; b.className='chip'+(state.mind.indexOf(o)>=0?' sel':''); b.textContent=o;
-    b.addEventListener('click', function(){
-      var i=state.mind.indexOf(o); if (i>=0) state.mind.splice(i,1); else state.mind.push(o);
-      b.classList.toggle('sel', i<0); save();
-    });
-    box.appendChild(b);
+    b.addEventListener('click', function(){ var i=state.mind.indexOf(o); if (i>=0) state.mind.splice(i,1); else state.mind.push(o); b.classList.toggle('sel',i<0); save(); });
+    $('#chips').appendChild(b);
   });
 }
-
-/* ---------- results ---------- */
 function renderResults(){
   var n=GRADED.length, first=0, notTried=0, miss={};
-  GRADED.forEach(function(id){
-    var it=state.items[id];
-    if (it && it.first===true) first++;
-    else { if (!it || !it.tries) notTried++; miss[TOPIC[id]]=(miss[TOPIC[id]]||0)+1; }
-  });
-  var pct=Math.round(first/n*100), stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
-  var nm=(state.name||'').trim();
+  GRADED.forEach(function(id){ var it=state.items[id]; if (it && it.first===true) first++; else { if (!it || !it.tries) notTried++; miss[TOPIC[id]]=1; } });
+  var pct=Math.round(first/n*100), stars=pct>=90?3:pct>=70?2:pct>=40?1:0, nm=(state.name||'').trim();
   var html='<div class="stars" aria-label="'+stars+' of 3 stars">'+'★★★'.slice(0,stars)+'☆☆☆'.slice(0,3-stars)+'</div>'+
-    '<h2>'+(nm?'Well done, '+esc(nm)+'!':'Well done!')+'</h2>'+
-    '<p class="score"><b>'+first+'</b> out of '+n+' right on the first try</p>'+
-    '<p class="muted small">Lesson 3-2 · Extend Place Value to Decimals · '+esc(new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}))+'</p>';
-  if (notTried) html+='<p>You have not answered <b>'+notTried+'</b> question'+(notTried===1?'':'s')+' yet. Tap <b>Back</b> to find them.</p>';
+    '<h2 style="margin:4px 0">'+(nm?'Well done, '+esc(nm)+'!':'Well done!')+'</h2>'+
+    '<p class="score-big"><b>'+first+'</b> out of '+n+' right on the first try</p>'+
+    '<p class="muted small">Extend Place Value to Decimals · '+esc(new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}))+'</p>';
+  if (notTried) html+='<p>You have not answered <b>'+notTried+'</b> question'+(notTried===1?'':'s')+' yet. Use the page buttons to find them.</p>';
   var topics=Object.keys(miss);
-  html += topics.length
-    ? '<div class="review"><b>Look at these again:</b><ul>'+topics.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>'
-    : '<p><b>Perfect! Nothing to review.</b></p>';
-  html+='<p class="muted small" style="margin-top:14px">Show this screen to your teacher.</p>';
+  html+=topics.length ? '<div class="review"><b>Look at these again:</b><ul>'+topics.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>' : '<p><b>Perfect! Nothing to review.</b></p>';
+  html+='<p class="muted small" style="margin:12px 0 0">Show this page to your teacher.</p>';
   $('#results').innerHTML=html;
 }
 
-/* ---------- navigation ---------- */
-var screens=$$('section.screen');
-function show(i){
-  i=Math.max(0,Math.min(screens.length-1,i));
-  screens.forEach(function(s,k){ s.classList.toggle('active', k===i); });
+/* ---------- pages ---------- */
+var pages=$$('.page'), slider=null, hero=null;
+document.addEventListener('visibilitychange', function(){ if (hero) hero.active(state.idx===0); });
+function tipOf(pg){ return (!HOVER && pg.getAttribute('data-tip-touch')) || pg.getAttribute('data-tip'); }
+pages.forEach(function(pg,i){ var pn=$('.pno',pg); if (pn) pn.textContent=i+1; });
+var dotsBox=$('#dots');
+pages.forEach(function(pg,i){ var b=document.createElement('button'); b.type='button'; b.textContent=i+1; b.setAttribute('aria-label','Page '+(i+1)); b.addEventListener('click', function(){ show(i); }); dotsBox.appendChild(b); });
+function show(i, quiet){
+  i=Math.max(0,Math.min(pages.length-1,i));
+  var dir = i>=state.idx ? 'in-next' : 'in-prev';
+  pages.forEach(function(pg,k){ pg.classList.remove('in-next','in-prev'); pg.classList.toggle('active',k===i); });
+  void pages[i].offsetWidth; pages[i].classList.add(dir);
   state.idx=i; save();
-  var s=screens[i];
-  if (s.getAttribute('data-show')==='results') renderResults();
-  $('#topTitle').textContent='Lesson 3-2 · '+s.getAttribute('data-title');
-  $('#topCount').textContent=(i+1)+' / '+screens.length;
-  $('#bar').style.width=(i/(screens.length-1)*100)+'%';
+  if (hero) hero.active(i===0);
+  var sw=$('.stage-wrap',pages[i]); if (sw){ sw.classList.remove('popup'); void sw.offsetWidth; sw.classList.add('popup'); }
+  if (pages[i].getAttribute('data-results')) renderResults();
+  $$('#dots button').forEach(function(b,k){ b.classList.toggle('on',k===i); });
+  $('#pageof').textContent='Page '+(i+1)+' of '+pages.length;
   $('#back').disabled = i===0;
-  var nx=$('#next');
-  nx.hidden = i===screens.length-1;
-  nx.textContent = i===0 ? 'Start ▶' : i===screens.length-2 ? 'See my results ▶' : 'Next ▶';
+  $('#next').hidden = i===pages.length-1;
   window.scrollTo(0,0);
+  if (slider){ slider.place(); setTimeout(slider.place, 700); }
+  say(tipOf(pages[i]));
 }
 $('#back').addEventListener('click', function(){ show(state.idx-1); });
 $('#next').addEventListener('click', function(){ show(state.idx+1); });
-var restartArmed=false;
+var armed=false;
 $('#restart').addEventListener('click', function(){
-  if (!restartArmed){ restartArmed=true; this.textContent='Tap again to erase all answers'; return; }
+  if (!armed){ armed=true; this.textContent='Tap again to erase all answers'; return; }
   try { localStorage.removeItem(KEY); } catch (e) {}
   location.reload();
 });
 
 /* ---------- boot ---------- */
 load();
-var nameInp=$('#name'); nameInp.value=state.name||'';
-nameInp.addEventListener('input', function(){ state.name=nameInp.value; save(); });
-$$('[data-gridsvg]').forEach(function(el){ el.innerHTML=gridSVG(+el.getAttribute('data-gridsvg')); });
+if (!HOVER) $$('.hover-text').forEach(function(el){ el.textContent=el.getAttribute('data-touch'); });
+var nameInp=$('#name'); nameInp.value=state.name||''; nameInp.addEventListener('input', function(){ state.name=nameInp.value; save(); });
+hero=setupHero();
 setupModels();
 setupGrid();
-setupDetective();
-setupSlider();
+setupStage();
+slider=setupSlider();
+setupBigNums();
 $$('[data-q]').forEach(function(el){
-  var id=el.getAttribute('data-q'), q=Q[id];
-  reg(id, el);
+  var id=el.getAttribute('data-q'), q=Q[id]; reg(id,el);
   if (q.type==='multi') renderMulti(el,id,q); else if (q.type==='num') renderNum(el,id,q); else renderChoice(el,id,q);
 });
-$('#raceChart').innerHTML = pvChart([1,0,-1], function(){ return {html:'2'}; });
-setupBuilder($('#build1'), 'b1', {digits:[3,6,8],
-  prompt:'<b>A.</b> Make a number where the <b>8</b> is worth <b>10 times</b> the 8 in 3.68.',
+setupBuilder($('#build1'),'b1',{digits:[3,6,8],
+  prompt:'<b>A.</b> Build a number where the <b>8</b> is worth <b>10 times</b> the 8 in 3.68.',
   test:function(n){ return n[1]===8; },
   hint:'In 3.68 the 8 is 8 hundredths (0.08). 10 times as much is 0.8. Which place is that?',
   explain:'The 8 is in the tenths place (0.8), and 0.8 is 10 times 0.08.'});
-setupBuilder($('#build2'), 'b2', {digits:[3,6,8],
-  prompt:'<b>B.</b> Make a number where the <b>6</b> is worth <b>'+TENTH+'</b> of the 6 in 3.68.',
+setupBuilder($('#build2'),'b2',{digits:[3,6,8],
+  prompt:'<b>B.</b> Build a number where the <b>6</b> is worth <b>'+TENTH+'</b> of the 6 in 3.68.',
   test:function(n){ return n[2]===6; },
   hint:'In 3.68 the 6 is 6 tenths (0.6). '+TENTH+' of that is 0.06. Which place is that?',
   explain:'The 6 is in the hundredths place (0.06), and 0.06 is '+TENTH+' of 0.6.'});
-setupReflect();
+setupWriting();
 updateReveals();
-show(state.idx||0);
-window.__lesson = {state:state, GRADED:GRADED, Q:Q};
+updateScore(false);
+show(state.idx||0, true);
+window.__lesson={state:state, GRADED:GRADED, Q:Q, show:show};
 })();
 </script>
 </body>
